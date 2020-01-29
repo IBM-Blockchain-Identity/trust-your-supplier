@@ -1,0 +1,72 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: myingressresource
+spec:
+  tls:
+    - hosts:
+        - CLUSTER_INGRESS_URL_HERE
+        - LEI_ISSUER_CLUSTER_INGRESS_URL_HERE
+        - GLEIF_CLUSTER_INGRESS_URL_HERE
+        - ACME_CLUSTER_INGRESS_URL_HERE
+      secretName: credimi-dev
+  rules:
+    - host: LEI_ISSUER_CLUSTER_INGRESS_URL_HERE
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: lei-issuer
+              servicePort: 80
+    - host: GLEIF_CLUSTER_INGRESS_URL_HERE
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: gleif
+              servicePort: 80
+    - host: ACME_CLUSTER_INGRESS_URL_HERE
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: acme
+              servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: vanityingressresource
+  annotations:
+    ingress.bluemix.net/redirect-to-https: "True"
+    ingress.bluemix.net/client-max-body-size: size=10m
+    ingress.bluemix.net/large-client-header-buffers: number=4 size=5m
+spec:
+  tls:
+    - hosts:
+        - LEI_ISSUER_VANITY_URL_HERE
+        - ACME_VANITY_URL_HERE
+        - GLEIF_VANITY_URL_HERE
+      secretName: vanity
+  rules:
+    - host: ACME_VANITY_URL_HERE
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: acme
+              servicePort: 80
+    - host: LEI_ISSUER_VANITY_URL_HERE
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: lei-issuer
+              servicePort: 80
+    - host: GLEIF_VANITY_URL_HERE
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: gleif
+              servicePort: 80

@@ -1,0 +1,23 @@
+extends site_layout
+
+block banner
+    .bbcu-logo-bar
+        .container.clear-fix
+            a(href="/")
+                img.bbcu-logo(src="/images/logo.png")
+            a.bbcu-search-icon(href="/admin")
+                img(src="/images/Icons/Search_Icon.png")
+    nav.navbar.navbar-expand-lg.bbcu-nav-bar.navbar-light.mb-3.p-0
+        .container
+            button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation")
+                span.navbar-toggler-icon
+            div#navbarNav.collapse.navbar-collapse
+                ul.navbar-nav
+                    li#accountsNav.nav-item.active
+                        a.nav-link(href="#") Accounts
+                    li#profileNav.nav-item
+                        a.nav-link(href="#") Options
+            .mb-2.mt-2
+                .btn-group
+                    button.btn.btn-danger.delete-account(data-original-text="Delete Account" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Deleting") Delete Account
+                    a.btn.btn-secondary#sign-off-link(href="/logout") Logout

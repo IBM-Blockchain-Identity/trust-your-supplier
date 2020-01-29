@@ -1,0 +1,210 @@
+extends login_layout
+
+block content
+    .container-fluid.bbcu-banner
+        .container
+            .d-flex.justify-content-between
+                .banner-content.align-self-center
+                    h3 What's a digital credential?
+                    p A digital credential will allow you to sign into your accounts securely without having to remember your password.
+                    a.btn(href="#") Learn More
+
+                .banner-sign-in.align-self-center
+                    #loginCarousel.carousel.slide(data-ride="false" data-interval="false" data-keyboard="false" data-wrap="false" pause="false")
+                        .carousel-inner
+                            .carousel-item.active
+                                h3 Digital Credential Sign On
+                                button#mobile-sign-on-button.btn.btn-bbcu.vcSignonLink Login with a digital credential
+                                button.btn.btn-bbcu.vcSignupLink(href="/signup") Sign up for an account
+                                .sign-in-links
+                                    a.userpassLink(href="#") Login with Email and Password
+                            .carousel-item
+                                h3 Sign On
+                                form#loginForm
+                                    .form-row.m-0
+                                        .form-group.col.p-0.m-0
+                                            label#userIDLabel.hidden-form-label(for="userID") Email
+                                            input#userID.form-control(type="text" name="username" placeholder="Email" required)
+                                    .form-row.m-0
+                                        .form-group.col.p-0.m-0
+                                            label#passwordLabel.hidden-form-label(for="password") Password
+                                            input#password.form-control(type="password" name="password" placeholder="Password" required)
+                                    button.btn.btn-bbcu.mt-3(type="submit") Sign On
+                                .sign-in-links
+                                    .row
+                                        a.col(href="#") Forgot your email?
+                                        a.col(href="#") Activate a Card
+                                    .row
+                                        a.col(href="#") Forgot Password?
+                                        a.col.vcSignonLink(href="#") Register for Online Access
+                            .carousel-item
+                                h3 Digital Credential Sign On
+                                form#vcSignonForm
+                                    .row.ml-0.mr-0
+                                        .col.pr-0.pl-0
+                                            label#vcUserIDLabel.hidden-form-label(for="vcUserID") Email
+                                            input#vcUserID.form-control(type="text" name="username" placeholder="Email" required)
+                                    button.btn.btn-bbcu.mt-3(type="submit") Sign On
+                                    span.extension-loaded.d-none.text-muted.ml-3 Chrome extension detected
+                                .sign-in-links
+                                    .row
+                                        a.col.userpassLink(href="#") Login with Username and Password
+                                    .row
+                                        a.col.vcSignupLink(href="#") Sign up for an account
+
+    .container.mt-5
+        .row
+            .col-md-4
+                .d-flex.flex-column
+                    h4.font-weight-bold.mb-4 What's New at BBCU?
+                    img.img-fluid.object-cover(src="/images/Images/3up_Image-1.jpg")
+                    a.mt-4.up3-link.text-decoration-underline(href="#") Learn More
+            .col-md-4
+                .d-flex.flex-column
+                    h4.font-weight-bold.mb-4 Credit Card Rewards
+                    img.img-fluid.object-cover(src="/images/Images/3up_Image-2.jpg")
+                    a.mt-4.up3-link.text-decoration-underline(href="#") Learn More
+            .col-md-4
+                .d-flex.flex-column
+                    h4.font-weight-bold.mb-4 Travel Rewards Programs
+                    img.img-fluid.object-cover(src="/images/Images/3up_Image-3.jpg")
+                    a.mt-4.up3-link.text-decoration-underline(href="#") Learn More
+
+block extra
+    #vcSignonModal.bbcu-signon.modal(tabindex="-1" role="dialog")
+        .modal-dialog(role="document")
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal")
+                        span &times;
+                .modal-body
+                    #vcSignonCarousel.carousel.slide(data-ride="false" data-interval="false" data-keyboard="false" data-wrap="false" pause="false")
+                        .carousel-inner
+                            .carousel-item.active.text-center
+                                h2 Collecting information
+                                .spinner-container
+                                    i.fas.fa-circle-notch.fa-spin.fa-2x
+                                .verifying-creds-text
+                                    span Please wait
+                            .carousel-item.text-center
+                                h2 Establishing a connection with your agent
+                                .spinner-container
+                                    i.fas.fa-circle-notch.fa-spin.fa-2x
+                                .verifying-creds-text
+                                    span Please accept the connection offer
+                            .carousel-item.text-center
+                                h2 Checking your account credential
+                                .spinner-container
+                                    i.fas.fa-circle-notch.fa-spin.fa-2x
+                                .verifying-creds-text
+                                    span Please accept the verification request
+                            .carousel-item.text-center
+                                h2 Login succeeded
+                                .spinner-container.text-success
+                                    i.fas.fa-check.fa-5x
+                                .verifying-creds-text
+                                    span Redirecting to your account...
+                            .carousel-item.text-center
+                                h2 Login failed
+                                p.mt-2.mb-2 We were unable to authenticate your digital credential.
+                                #loginErrorCode.text-danger
+                                #loginErrorMessage.text-danger.mb-2
+                                button.btn.btn-bbcu.userpassLink(type="button" data-dismiss="modal") Standard Sign On
+
+    #vcSignupModal.bbcu-signon.modal(tabindex="-1" role="dialog")
+        .modal-dialog(role="document")
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal")
+                        span &times;
+                .modal-body
+                    #vcSignupCarousel.carousel.slide(data-ride="false" data-interval="false" data-keyboard="false" data-wrap="false" pause="false")
+                        .carousel-inner
+
+                            .carousel-item.active.text-center
+                                h2 Before registering for an account..
+                                .row.mt-4.mb-4.text-left
+                                    .col-sm-3
+                                    .col-sm-6
+                                        p.text-decoration-bolder You will need the following credentials:
+                                        ol
+                                            li Driver's License
+                                            li Proof of Employment
+                                    .col-sm-3
+                                div
+                                    button#credsNextButton.btn.btn-bbcu Next
+                                    a.vcSignupCancel.ml-2.text-decoration-underline(href="#") Cancel
+
+                            .carousel-item.text-center
+                                h2 Please enter an email, password, and agent URL to create a BBCU account
+                                .signup-form.text-left
+                                    form#signupForm
+                                        .form-group
+                                            label.hidden-form-label(for="signupUserID") Email Address
+                                            .input-group
+                                                input#signupUserID.form-control(type="text" name="username" placeholder="Email Address" required)
+                                                .input-group-append
+                                                    span.input-group-text @example.com
+                                        .form-group
+                                            label.hidden-form-label(for="signupPassword") Password
+                                            input#signupPassword.form-control(type="password" name="password" placeholder="Password" required)
+                                        .form-group
+                                            label.hidden-form-label(for="signupConfirmPassword") Confirm Password
+                                            input#signupConfirmPassword.form-control(type="password" name="confirm_password" placeholder="Confirm Password" required)
+                                            span#signupPasswordMessage
+                                        .form-group
+                                            label.hidden-form-label(for="signupAgentName") Agent URL
+                                            input#signupAgentName.form-control(type="text" name="agent_name" placeholder="Agent URL" required)
+                                div
+                                    button#signupNextButton.btn.btn-bbcu(disabled) Next
+                                    a.vcSignupCancel.ml-2.text-decoration-underline(href="#") Cancel
+                                    span.extension-loaded.d-none.text-muted.ml-3 Chrome extension detected
+
+                            .carousel-item.text-center
+                                h2 Collecting information
+                                .verifying-creds-text
+                                    i.fas.fa-circle-notch.fa-spin.fa-2x
+                                    span Please wait
+
+                            .carousel-item.text-center
+                                h2 Establishing a connection with your agent
+                                .verifying-creds-text
+                                    i.fas.fa-circle-notch.fa-spin.fa-2x
+                                    span Please accept the connection offer.
+
+                            .carousel-item.text-center
+                                h2 Checking your identification
+                                .verifying-creds-text
+                                    i.fas.fa-circle-notch.fa-spin.fa-2x
+                                    span Please accept the verification request
+
+                            .carousel-item.text-center
+                                h2 Issuing your account information
+                                .verifying-creds-text
+                                    i.fas.fa-circle-notch.fa-spin.fa-2x
+                                    span Please accept the credential offer
+
+                            .carousel-item.text-center
+                                .text-success
+                                    i.fas.fa-check.fa-5x
+                                .verifying-creds-text.text-success
+                                    h5 All done!
+                                    p Redirecting to your account...
+
+                            .carousel-item.text-center
+                                h2 Enrollment Failed
+                                .signup-failed-text
+                                    p.mb-2 You don’t have permission to create an account.
+                                    #signupErrorCode.text-danger
+                                    #signupErrorMessage.text-danger.mb-2
+                                button.btn.btn-bbcu.userpassLink(type="button" data-dismiss="modal") Standard Sign On
+
+                            .carousel-item.text-center
+                                h2 Enrollment Failed
+                                .signup-failed-text
+                                    p You already have an account.
+                                button.btn.btn-bbcu.vcSignonLink(type="button" data-dismiss="modal") Digital Credential Sign On
+
+block scripts
+    script(src="/javascripts/login.js")
+    script(src="/javascripts/qrcode.min.js")

@@ -1,0 +1,30 @@
+language: bash
+dist: xenial
+
+services:
+  - docker
+
+git:
+  depth: 1
+
+before_install:
+  - curl -sL https://ibm.biz/idt-installer | bash
+
+script:
+  - ibmcloud login -a https://api.ng.bluemix.net --apikey $IBMCLOUD_API_KEY > /dev/null
+  - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+  - travis/build_and_push.sh
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: ./travis/deploy.sh
+    on:
+      repo: IBM-Blockchain-Identity/trust-your-supplier
+      tags: true
+  - provider: script
+    skip_cleanup: true
+    script: ./travis/deploy_dev.sh
+    on:
+      repo: IBM-Blockchain-Identity/trust-your-supplier
+      branch: master

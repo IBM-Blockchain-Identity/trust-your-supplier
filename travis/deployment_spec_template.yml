@@ -1,0 +1,234 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lei-issuer
+spec:
+  selector:
+    app: lei-issuer
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lei-issuer
+  labels:
+    app: lei-issuer
+spec:
+  selector:
+    matchLabels:
+      app: lei-issuer
+  template:
+    metadata:
+      labels:
+        app: lei-issuer
+    spec:
+      containers:
+        - name: lei-issuer
+          image: LEI_ISSUER_IMAGE_TAG_HERE
+          imagePullPolicy: Always
+          ports:
+            - name: lei-issuer
+              containerPort: 3000
+          env:
+            - name: DB_CONNECTION_STRING
+              value: "http://couchdb:5984"
+            - name: DB_USERS
+              value: "lei_issuer_db"
+            - name: LOG_LEVEL
+              value: "debug"
+            - name: ACCOUNT_URL
+              value: "ACCOUNT_URL_HERE"
+            - name: AGENT_NAME
+              value: "LEI_ISSUER_AGENT_NAME_HERE"
+            - name: FRIENDLY_NAME
+              value: "LEI Issuer"
+            - name: AGENT_PASSWORD
+              value: "LEI_ISSUER_AGENT_PASSWORD_HERE"
+            - name: CARD_IMAGE_RENDERING
+              value: "branding_server"
+            - name: BRANDING_SERVER_ENDPOINT
+              value: "BRANDING_SERVER_ENDPOINT_HERE"
+            - name: BRANDING_SERVER_FRONT_TEMPLATE
+              value: "LEIIssuerfront"
+            - name: BRANDING_SERVER_BACK_TEMPLATE
+              value: "LEIIssuerback"
+            - name: ADMIN_API_USERNAME
+              value: "ADMIN_API_USERNAME_HERE"
+            - name: ADMIN_API_PASSWORD
+              value: "ADMIN_API_PASSWORD_HERE"
+            - name: SESSION_SECRET
+              value: "LEI_ISSUER_SESSION_SECRET_HERE"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gleif
+spec:
+  selector:
+    app: gleif
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gleif
+  labels:
+    app: gleif
+spec:
+  selector:
+    matchLabels:
+      app: gleif
+  template:
+    metadata:
+      labels:
+        app: gleif
+    spec:
+      containers:
+        - name: gleif
+          image: GLEIF_IMAGE_TAG_HERE
+          imagePullPolicy: Always
+          ports:
+            - name: gleif
+              containerPort: 3000
+          env:
+            - name: DB_CONNECTION_STRING
+              value: "http://couchdb:5984"
+            - name: DB_USERS
+              value: "gleif_db"
+            - name: LOG_LEVEL
+              value: "debug"
+            - name: ACCOUNT_URL
+              value: "ACCOUNT_URL_HERE"
+            - name: AGENT_NAME
+              value: "GLEIF_AGENT_NAME_HERE"
+            - name: FRIENDLY_NAME
+              value: "GLEIF"
+            - name: AGENT_PASSWORD
+              value: "GLEIF_AGENT_PASSWORD_HERE"
+            - name: CARD_IMAGE_RENDERING
+              value: "branding_server"
+            - name: BRANDING_SERVER_ENDPOINT
+              value: "BRANDING_SERVER_ENDPOINT_HERE"
+            - name: BRANDING_SERVER_FRONT_TEMPLATE
+              value: "GLEIFfront"
+            - name: BRANDING_SERVER_BACK_TEMPLATE
+              value: "GLEIFback"
+            - name: ADMIN_API_USERNAME
+              value: "ADMIN_API_USERNAME_HERE"
+            - name: ADMIN_API_PASSWORD
+              value: "ADMIN_API_PASSWORD_HERE"
+            - name: SESSION_SECRET
+              value: "GLEIF_SESSION_SECRET_HERE"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme
+spec:
+  selector:
+    app: acme
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme
+  labels:
+    app: acme
+spec:
+  selector:
+    matchLabels:
+      app: acme
+  template:
+    metadata:
+      labels:
+        app: acme
+    spec:
+      containers:
+        - name: acme
+          image: ACME_IMAGE_TAG_HERE
+          imagePullPolicy: Always
+          ports:
+            - name: acme
+              containerPort: 3000
+          env:
+            - name: DB_CONNECTION_STRING
+              value: "http://couchdb:5984"
+            - name: DB_USERS
+              value: "acme_db"
+            - name: LOG_LEVEL
+              value: "debug"
+            - name: ACCOUNT_URL
+              value: "ACCOUNT_URL_HERE"
+            - name: AGENT_NAME
+              value: "ACME_AGENT_NAME_HERE"
+            - name: FRIENDLY_NAME
+              value: "Big Blue Credit Union"
+            - name: AGENT_PASSWORD
+              value: "ACME_AGENT_PASSWORD_HERE"
+            - name: SIGNUP_DMV_ISSUER_AGENT
+              value: "DMV_AGENT_URL_HERE"
+            - name: SIGNUP_HR_ISSUER_AGENT
+              value: "HR_AGENT_URL_HERE"
+            - name: CARD_IMAGE_RENDERING
+              value: "branding_server"
+            - name: BRANDING_SERVER_ENDPOINT
+              value: "BRANDING_SERVER_ENDPOINT_HERE"
+            - name: BRANDING_SERVER_FRONT_TEMPLATE
+              value: "ACMEFront"
+            - name: BRANDING_SERVER_BACK_TEMPLATE
+              value: "ACMEback"
+            - name: ADMIN_API_USERNAME
+              value: "ADMIN_API_USERNAME_HERE"
+            - name: ADMIN_API_PASSWORD
+              value: "ADMIN_API_PASSWORD_HERE"
+            - name: SESSION_SECRET
+              value: "ACME_SESSION_SECRET_HERE"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: couchdb
+spec:
+  selector:
+    app: couchdb
+  ports:
+    - protocol: TCP
+      name: couchdb
+      port: 5984
+      targetPort: 5984
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: couchdb
+  labels:
+    app: couchdb
+spec:
+  selector:
+    matchLabels:
+      app: couchdb
+  template:
+    metadata:
+      labels:
+        app: couchdb
+    spec:
+      containers:
+        - name: couchdb
+          image: couchdb
+          imagePullPolicy: Always
+          ports:
+            - name: couchdb
+              containerPort: 5984

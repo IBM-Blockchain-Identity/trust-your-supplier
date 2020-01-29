@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+# Where is this script?!
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+# Set some default parameters
+KUBERNETES_NAMESPACE=${KUBERNETES_NAMESPACE:-ssi-samples}
+
+VERSION=${TRAVIS_TAG:-latest}
+
+LEI_ISSUER_IMAGE_TAG=${LEI_ISSUER_IMAGE_TAG:-verifycreds/lei-issuer:$VERSION}
+GLEIF_IMAGE_TAG=${GLEIF_IMAGE_TAG:-verifycreds/gleif:$VERSION}
+ACME_IMAGE_TAG=${ACME_IMAGE_TAG:-verifycreds/acme:$VERSION}
+
+LEI_ISSUER_AGENT_NAME=${LEI_ISSUER_AGENT_NAME:-leiissuer}
+GLEIF_AGENT_NAME=${GLEIF_AGENT_NAME:-gleif}
+ACME_AGENT_NAME=${ACME_AGENT_NAME:-acme}
+
+LEI_ISSUER_AGENT_URL=${LEI_ISSUER_AGENT_URL:-$LEI_ISSUER_AGENT_NAME}
+GLEIF_AGENT_URL=${GLEIF_AGENT_URL:-$GLEIF_AGENT_NAME}
+
+LEI_ISSUER_SESSION_SECRET=${LEI_ISSUER_SESSION_SECRET:-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '')}
+GLEIF_SESSION_SECRET=${GLEIF_SESSION_SECRET:-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '')}
+ACME_SESSION_SECRET=${ACME_SESSION_SECRET:-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '')}
+
+# INGRESS_URLs
+CLUSTER_INGRESS_URL=${CLUSTER_INGRESS_URL:-credimi-dev.us-south.containers.appdomain.cloud}
+LEI_ISSUER_CLUSTER_INGRESS_URL=${LEI_ISSUER_CLUSTER_INGRESS_URL:-lei-issuer.credimi-dev.us-south.containers.appdomain.cloud}
+GLEIF_CLUSTER_INGRESS_URL=${GLEIF_CLUSTER_INGRESS_URL:-gleif.credimi-dev.us-south.containers.appdomain.cloud}
+ACME_CLUSTER_INGRESS_URL=${ACME_CLUSTER_INGRESS_URL:-acme.credimi-dev.us-south.containers.appdomain.cloud}
+
+LEI_ISSUER_VANITY_URL=${LEI_ISSUER_VANITY_URL:-lei-issuer.livedemo.verify-creds.com}
+GLEIF_VANITY_URL=${GLEIF_VANITY_URL:-gleif.livedemo.verify-creds.com}
+ACME_VANITY_URL=${ACME_VANITY_URL:-acme.livedemo.verify-creds.com}
+
+# Configure deployment spec
+DEPLOYMENT_SPEC=$DIR/deployment_spec.yml
+echo "Setting up deployment spec file: $DEPLOYMENT_SPEC"
+cp $DIR/deployment_spec_template.yml $DEPLOYMENT_SPEC
+
+sed -i "s+ACCOUNT_URL_HERE+${ACCOUNT_URL}+g" $DEPLOYMENT_SPEC
+
+sed -i "s+LEI_ISSUER_AGENT_NAME_HERE+$LEI_ISSUER_AGENT_NAME+g" $DEPLOYMENT_SPEC
+sed -i "s+LEI_ISSUER_AGENT_PASSWORD_HERE+$LEI_ISSUER_AGENT_PASSWORD+g" $DEPLOYMENT_SPEC
+
+sed -i "s+GLEIF_AGENT_NAME_HERE+$GLEIF_AGENT_NAME+g" $DEPLOYMENT_SPEC
+sed -i "s+GLEIF_AGENT_PASSWORD_HERE+$GLEIF_AGENT_PASSWORD+g" $DEPLOYMENT_SPEC
+
+sed -i "s+ACME_AGENT_NAME_HERE+$ACME_AGENT_NAME+g" $DEPLOYMENT_SPEC
+sed -i "s+ACME_AGENT_PASSWORD_HERE+$ACME_AGENT_PASSWORD+g" $DEPLOYMENT_SPEC
+
+sed -i "s+HR_AGENT_URL_HERE+$GLEIF_AGENT_URL+g" $DEPLOYMENT_SPEC
+sed -i "s+LEI_ISSUER_AGENT_URL_HERE+$LEI_ISSUER_AGENT_URL+g" $DEPLOYMENT_SPEC
+
+sed -i "s+BRANDING_SERVER_ENDPOINT_HERE+$BRANDING_SERVER_ENDPOINT+g" $DEPLOYMENT_SPEC
+
+sed -i "s+ADMIN_API_USERNAME_HERE+$ADMIN_API_USERNAME+g" $DEPLOYMENT_SPEC
+sed -i "s+ADMIN_API_PASSWORD_HERE+$ADMIN_API_PASSWORD+g" $DEPLOYMENT_SPEC
+
+sed -i "s+LEI_ISSUER_IMAGE_TAG_HERE+$LEI_ISSUER_IMAGE_TAG+g" $DEPLOYMENT_SPEC
+sed -i "s+GLEIF_IMAGE_TAG_HERE+$GLEIF_IMAGE_TAG+g" $DEPLOYMENT_SPEC
+sed -i "s+ACME_IMAGE_TAG_HERE+$ACME_IMAGE_TAG+g" $DEPLOYMENT_SPEC
+
+sed -i "s+LEI_ISSUER_SESSION_SECRET_HERE+$LEI_ISSUER_SESSION_SECRET+g" $DEPLOYMENT_SPEC
+sed -i "s+GLEIF_SESSION_SECRET_HERE+$GLEIF_SESSION_SECRET+g" $DEPLOYMENT_SPEC
+sed -i "s+ACME_SESSION_SECRET_HERE+$ACME_SESSION_SECRET+g" $DEPLOYMENT_SPEC
+
+# Configure ingress
+INGRESS=$DIR/ingress.yml
+echo "Setting up ingress file: $INGRESS"
+cp $DIR/ingress_template.yml $INGRESS
+
+sed -i "s+LEI_ISSUER_CLUSTER_INGRESS_URL_HERE+${LEI_ISSUER_CLUSTER_INGRESS_URL}+g" $INGRESS
+sed -i "s+GLEIF_CLUSTER_INGRESS_URL_HERE+${GLEIF_CLUSTER_INGRESS_URL}+g" $INGRESS
+sed -i "s+ACME_CLUSTER_INGRESS_URL_HERE+${ACME_CLUSTER_INGRESS_URL}+g" $INGRESS
+sed -i "s+CLUSTER_INGRESS_URL_HERE+${CLUSTER_INGRESS_URL}+g" $INGRESS
+
+sed -i "s+LEI_ISSUER_VANITY_URL_HERE+${LEI_ISSUER_VANITY_URL}+g" $INGRESS
+sed -i "s+GLEIF_VANITY_URL_HERE+${GLEIF_VANITY_URL}+g" $INGRESS
+sed -i "s+ACME_VANITY_URL_HERE+${ACME_VANITY_URL}+g" $INGRESS
+
+echo "Configuring Kubectl to be able to talk to our cluster..."
+$(bx cs cluster-config ${IBMCLOUD_DEPLOYMENT_CLUSTER} --export)
+
+echo "Deleting existing issuer deployments"
+kubectl delete deployment lei-issuer gleif acme --namespace=$KUBERNETES_NAMESPACE
+
+echo "Redeploying demo issuers"
+(cd ${DIR}; kubectl apply -f deployment_spec.yml -f ingress.yml --namespace=$KUBERNETES_NAMESPACE)
