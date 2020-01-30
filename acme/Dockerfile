@@ -17,15 +17,14 @@ ENV STATIC_CARD_FRONT_IMAGE=/opt/app/public/images/card_front_sample.jpg
 ENV STATIC_CARD_BACK_IMAGE=/opt/app/public/images/card_back_sample.jpg
 
 ENV CONNECTION_IMAGE_PROVIDER=static
-ENV CONNECTION_ICON_PATH=/opt/app/docs/bbcu.jpg
+ENV CONNECTION_ICON_PATH=/opt/app/docs/gov_dmv.png
 
 ENV LOGIN_PROOF_PROVIDER=file
-ENV LOGIN_PROOF_PATH=/opt/app/docs/bbcu_login_proof_schema.json
+ENV LOGIN_PROOF_PATH=/opt/app/docs/dmv_login_proof_schema.json
 
-ENV SIGNUP_PROOF_PROVIDER=account
-ENV SIGNUP_ACCOUNT_PROOF_PATH=/opt/app/docs/account_proof_request.json
+ENV SIGNUP_PROOF_PROVIDER=none
 
-ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/us_bank_account.json
-ENV ACCEPT_INCOMING_CONNECTIONS=false
+ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/gov_dmv_driver_license.json
+ENV ACCEPT_INCOMING_CONNECTIONS=true
 
 CMD npm start

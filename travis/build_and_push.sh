@@ -19,8 +19,8 @@ build_and_push () {
     echo "Building $APP_NAME docker image"
     (cd ${BUILD_DIR}; docker build -t ${IMAGE_TAG} .)
 
-    echo "Pushing $APP_NAME image $IMAGE_TAG"
-    docker push ${IMAGE_TAG}
+#    echo "Pushing $APP_NAME image $IMAGE_TAG"
+#    docker push ${IMAGE_TAG}
 }
 
 

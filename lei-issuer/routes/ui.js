@@ -42,7 +42,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 	// Status url for monitoring
 	router.get('/status', (req, res, next) => {
 		res.json({
-			message: 'Gov DMV is running',
+			message: 'LEI Issuer is running',
 			status: 'OK'
 		});
 	});
@@ -52,12 +52,12 @@ exports.createRouter = function (users_instance, ev, middleware) {
 		if (req.session && req.session.user_id)
 			return res.redirect('/logout');
 
-		res.render('login', {title: 'Gov DMV'});
+		res.render('login', {title: 'GS1'});
 	});
 
 	// Admin page
 	router.get('/admin', [ middleware.is_admin ], (req, res, next) => {
-		res.render('admin', {title: 'DMV Administration'});
+		res.render('admin', {title: 'GS1 Administration'});
 	});
 
 	// Edit info for a single user

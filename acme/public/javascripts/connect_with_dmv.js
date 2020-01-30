@@ -18,30 +18,7 @@ $(document).ready(() => {
 
 	window.user_id = decodeURIComponent(window.readCookie('user_id'));
 
-	// Highlight the account navbar item
-	$('#accountsNav').addClass('active');
-	document.body.style['background-color'] = '#ffffff';
-
-
-	// Switch to the settings panel if the profile icon is clicked
-	$('#profileNav').on('click', () => {
-		$('#accountsNav').removeClass('active');
-		$('#profileNav').addClass('active');
-		$('#accountPage').addClass('d-none');
-		$('#settingsPage').removeClass('d-none');
-		document.body.style['background-color'] = '#eeeeee';
-	});
-
-	// Switch to the settings panel if the profile icon is clicked
-	$('#accountsNav').on('click', () => {
-		$('#accountsNav').addClass('active');
-		$('#profileNav').removeClass('active');
-		$('#accountPage').removeClass('d-none');
-		$('#settingsPage').addClass('d-none');
-		document.body.style['background-color'] = '#ffffff';
-	});
-
-	const connectButton = $('.issuanceLink');
+	const connectButton = $('#connectWalletButton');
 
 	/**
 	 * Creates a connection invitation, displays the invitation to the user,
@@ -142,6 +119,7 @@ async function issue_credential (connection_method) {
 	};
 
 	carousel.carousel(ISSUANCE_STEPS.BUILDING_CREDENTIAL);
+	// keep the issuance modal open
 	$('#issuanceModal').modal({
 		backdrop: 'static',
 		keyboard: false
@@ -179,7 +157,8 @@ async function issue_credential (connection_method) {
 			if (!response || !response.status)
 				throw new Error(`No status information returned in update response: ${JSON.stringify(response)}`);
 
-			console.log(`Updated issuance status: ${JSON.stringify(response.status)}`);
+			console.log(`Updated issuance status: ${JSON.stringify(response)}`);
+
 
 			// Update the carousel to match the current status
 			if (ISSUANCE_STEPS.hasOwnProperty(response.status))
@@ -193,7 +172,6 @@ async function issue_credential (connection_method) {
 				if (response.reason)
 					$('#errorMessage').html(`Reason: ${response.reason}`);
 				console.error(`Credential issuance failed: ${JSON.stringify(response.error)}`);
-				carousel.carousel(ISSUANCE_STEPS.ERROR);
 			}
 
 			if ([ 'STOPPED', 'ERROR', 'FINISHED' ].indexOf(response.status) >= 0) {
@@ -230,7 +208,7 @@ async function issue_credential (connection_method) {
 			}
 
 			await new Promise((resolve, reject) => {
-				setTimeout(resolve, interval);
+				setInterval(resolve, interval);
 			});
 		}
 
@@ -244,10 +222,91 @@ async function issue_credential (connection_method) {
 
 function populate_user_info () {
 	const dictionary = {
+		'eye_color': {
+			element: '#infoEyeColor'
+		},
+		'vehicle_class': {
+			element: '#infoVehicleClass'
+		},
+		'last_name': {
+			element: '#infoLastName'
+		},
+		'document_discriminator': {
+			element: '#infoDocDiscrim'
+		},
+		'customer_identifier': {
+			element: '#infoCustomerID'
+		},
+		'height': {
+			element: '#infoHeight'
+		},
+		'cardholder_sex': {
+			element: '#infoSex'
+		},
+		'dob': {
+			type: 'date',
+			element: '#infoDoB'
+		},
+		'dob_timestamp': {
+			element: '#infoDoBTimestamp'
+		},
+		'signature': {
+			element: '#infoSignature'
+		},
+		'endorsements': {
+			element: '#infoEndorsements'
+		},
+		'hair_color': {
+			element: '#infoHairColor'
+		},
+		'expiration_date': {
+			type: 'date',
+			element: '#infoExpires'
+		},
+		'rci_codes': {
+			element: '#infoRCI'
+		},
 		'first_name': {
 			element: '#infoFirstName'
+		},
+		'portrait': {
+			friendly_name: 'Portrait',
+			element: '#userPortraitPreview'
+		},
+		'weight': {
+			element: '#infoWeight'
+		},
+		'date_of_issue': {
+			type: 'date',
+			element: '#infoDateIssued'
+		},
+		'address_line_1': {
+			element: '#infoAddress1'
+		},
+		'address_line_2': {
+			element: '#infoAddress2'
+		},
+		'city': {
+			element: '#infoCity'
+		},
+		'state': {
+			element: '#infoState'
+		},
+		'zip_code': {
+			element: '#infoZipCode'
+		},
+		'country': {
+			element: '#infoCountry'
+		},
+		'email': {
+			element: '#userEmail'
 		}
 	};
+
+	// Start the loading animation
+	const loader = $('#refreshInfoButton');
+	loader.html(loader.data('loading-text'));
+	loader.attr('disabled', 'disabled');
 
 	const user_id = window.user_id;
 	console.log(`Getting personal info for ${user_id}`);
@@ -257,20 +316,49 @@ function populate_user_info () {
 	}).done((user_doc) => {
 		user_doc = user_doc[user_id];
 
+		// Stop the loader
+		loader.html(loader.data('original-text'));
+		loader.removeAttr('disabled');
+
 		if (user_doc && user_doc.opts)
 			console.log(`User's agent information: ${JSON.stringify(user_doc.opts, 0, 1)}`);
 
-		console.log(`Got personal info for ${user_id} ${JSON.stringify(user_doc.personal_info)}`);
+		console.log(`Got personal info for ${user_id} ${JSON.stringify(user_doc.personal_info, 0, 1)}`);
 		for (const schema_key in dictionary) {
 			const config = dictionary[schema_key];
-			if (!user_doc.personal_info || !user_doc.personal_info[schema_key]) continue;
+			if (user_doc.personal_info && user_doc.personal_info[schema_key]) {
 
-			if (!config.element) continue;
+				if (!config.element) continue;
+				$(config.element).val(user_doc.personal_info[schema_key]);
 
-			$(config.element).html(user_doc.personal_info[schema_key]);
+			} else if (user_doc.opts && user_doc.opts[schema_key]) {
+
+				if (!config.element) continue;
+				$(config.element).val(user_doc.opts[schema_key]);
+
+			} else {
+				continue;
+			}
 		}
 
+		// Render the profile picture
+		$(dictionary.portrait.element)[0].src = user_doc.personal_info.portrait;
+
+		// Show first and last name at top of page
+		$('.first-name').html(user_doc.personal_info['first_name']);
+		$('.last-name').html(user_doc.personal_info['last_name']);
+
 	}).fail((jqXHR, textStatus, errorThrown) => {
+		// Stop the loader
+		loader.html(loader.data('original-text'));
+		loader.removeAttr('disabled');
+
 		console.error('Failed to get personal info:', errorThrown, jqXHR.responseText);
+		let alertText = `Failed to get personal info. status: ${textStatus}, error: ${errorThrown}, jqXHR:${JSON.stringify(jqXHR)}`;
+		if (jqXHR.responseJSON && jqXHR.responseJSON.reason) {
+			const response = jqXHR.responseJSON;
+			alertText = `Failed to get personal info. <strong>error</strong>: ${response.error}, <strong>reason</strong>: ${response.reason}`;
+		}
+		$('#personalInfoAlert').html(window.alertHTML(alertText));
 	});
 }

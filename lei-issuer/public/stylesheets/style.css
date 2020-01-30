@@ -37,6 +37,14 @@ html {
   border-radius: 0;
 }
 
+.btn.btn-primary {
+  background-color: #002c6c;
+}
+
+.btn.btn-danger {
+  background-color: #f26334;
+}
+
 hr {
   border-bottom: 1px solid #eff4ff;
 }
@@ -46,7 +54,7 @@ hr {
 }
 
 body {
-  background-image: linear-gradient(#a8c3ff, #a8c3ff), linear-gradient(#eff4ff, #eff4ff);
+  background-image: linear-gradient(#002c6c, #002c6c), linear-gradient(#eff4ff, #eff4ff);
   background-repeat: no-repeat, no-repeat;
   background-position: 0 0, 0 0;
   background-size: 100% 400px, cover;
