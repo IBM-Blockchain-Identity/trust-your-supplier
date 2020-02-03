@@ -1,5 +1,5 @@
 html, body, main {
-    background-color: #0b77e3;
+    background-color: #46618B;
     height: 100%;
 }
 
@@ -12,16 +12,16 @@ html, body, main {
 }
 
 .main-nav {
-    height: 64px;
+    height: 92px;
     background-color: #fff;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.12);
     padding: 8px 16px;
 }
 
 .navbar-brand {
-    height: 45px;
-    width: 105px;
-    background-image: url(/images/ibm_logo.svg);
+    height: 80px;
+    width: 166px;
+    background-image: url(/images/gleif-logo.svg);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -42,13 +42,13 @@ html, body, main {
 }
 
 .btn-primary {
-    background-color: #0b77e3;
+    background-color: #46618B;
     color: #ffffff;
 }
 
 .btn-primary:hover {
     background-color: white;
-    color: #0b77e3;
+    color: #46618B;
 }
 
 .btn-danger {
@@ -95,7 +95,7 @@ h1, h2, h3, h4, h5, h6, label {
 }
 
 .account-menu {
-    background-color: #0b77e3;
+    background-color: #46618B;
     color: white;
     display: flex;
     flex-direction: column;
@@ -124,7 +124,7 @@ h1, h2, h3, h4, h5, h6, label {
 }
 
 .issueButton {
-    background-color: #0b77e3;
+    background-color: #46618B;
     border: 1px solid #ffffff;
     color: #ffffff;
     -webkit-animation: glowing 1500ms infinite;
@@ -168,12 +168,12 @@ h1, h2, h3, h4, h5, h6, label {
 .blue-background .btn-primary {
     background-color: #fff;
     border: 1px solid #fff;
-    color: #0b77e3;
+    color: #46618B;
     text-decoration: none;
 }
 
 .blue-background .btn-primary:hover {
-    background-color: #0b91ff;
+    background-color: #46618B;
     color: #fff;
 }
 
@@ -195,7 +195,7 @@ h1, h2, h3, h4, h5, h6, label {
 
 .blue-background .btn-outline-primary:hover {
     background-color: #fff;
-    color: #0b77e3;
+    color: #46618B;
 }
 
 .form-control {
