@@ -64,6 +64,10 @@ h1, h2, h3, h4, h5, h6, label {
     font-weight: bolder
 }
 
+h5 {
+  margin-bottom: 1.5rem;
+}
+
 .account-content dt, .account-content dd {
     font-size: 12px;
     margin-bottom: 8px;
