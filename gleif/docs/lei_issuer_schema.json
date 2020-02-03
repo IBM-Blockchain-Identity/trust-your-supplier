@@ -1,0 +1,7 @@
+{
+  "name": "LEI Issuer",
+  "version": "1.1",
+  "attributes": [
+    "LEI"
+  ]
+}
