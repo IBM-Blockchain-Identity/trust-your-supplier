@@ -14,10 +14,10 @@ block content
                             ol.breadcrumb.bg-white.pl-0
                                 li.breadcrumb-item
                                     a(href="/") Home
-                                li.breadcrumb-item.active GS1 User Administration
+                                li.breadcrumb-item.active GS1 Account Administration
                         .form-row
                             .d-flex.justify-content-between.w-100
-                                h3 Create a New User
+                                h3 Create a New Legal Entity
                                 button.btn.btn-secondary(data-toggle="modal" data-target="#autofillModal") Demo Users
                         hr.hr-thick
                         .form-row
@@ -49,32 +49,11 @@ block content
                     .col-md-8
                         .form-row
                             .form-group.col
-                                label(for="createUserFirstName") First Name
-                                input#createUserFirstName.form-control(type="text" name="first_name" required)
+                                label(for="createLegalName") Legal Name
+                                input#createLegalName.form-control(type="text" name="legal_name" required)
                             .form-group.col
-                                label(for="createUserLastName") Last Name
-                                input#createUserLastName.form-control(type="text" name="last_name" required)
-                        .form-row
-                            .form-group.col-md-5
-                                label(for="createUserDoB") Date of Birth
-                                input#createUserDoB.form-control(type="text" name="dob" required)
-                                input#createUserDoBTimestamp.form-control(type="hidden" name="dob_timestamp")
-                            .form-group.col-md-2
-                                label(for="createUserHeight") Height
-                                input#createUserHeight.form-control(type="text" name="height" required)
-                            .form-group.col-md-2
-                                label(for="createUserWeight") Weight
-                                input#createUserWeight.form-control(type="text" name="weight" required)
-                            .form-group.col-md-3
-                                label(for="createUserSex") Sex
-                                input#createUserSex.form-control(type="text" name="cardholder_sex" required)
-                        .form-row
-                            .form-group.col-md-4
-                                label(for="createUserHairColor") Hair Color
-                                input#createUserHairColor.form-control(type="text" name="hair_color" required)
-                            .form-group.col-md-4
-                                label(for="createUserEyeColor") Eye Color
-                                input#createUserEyeColor.form-control(type="text" name="eye_color" required)
+                                label(for="createUserLastName") LEI Number
+                                input#createUserLastName.form-control(type="text" name="lei_number" required)
                 hr
                 .row
                     .col-md-4
@@ -103,18 +82,8 @@ block content
                 hr
                 .row
                     .col-md-4
-                        h4 License Info
+                        h4 Certification Info
                     .col-md-8
-                        .form-row
-                            .form-group.col
-                                label(for="createUserVehicleClass") Vehicle Class
-                                input#createUserVehicleClass.form-control(type="text" name="vehicle_class" required)
-                            .form-group.col
-                                label(for="createUserDiscriminator") Doc. Discriminator
-                                input#createUserDiscriminator.form-control(type="text" name="document_discriminator" required)
-                            .form-group.col
-                                label(for="createUserCustomerID") Customer ID
-                                input#createUserCustomerID.form-control(type="text" name="customer_identifier" required)
                         .form-row
                             .form-group.col
                                 label(for="createUserDateOfIssue") Date Issued
@@ -122,16 +91,6 @@ block content
                             .form-group.col
                                 label(for="createUserExpires") Expires
                                 input#createUserExpires.form-control(type="text" name="expiration_date" required)
-                            .form-group.col
-                                label(for="createUserRCI") RCI Codes
-                                input#createUserRCI.form-control(type="text" name="rci_codes" required)
-                        .form-row
-                            .form-group.col
-                                label(for="createUserSignature") Signature
-                                input#createUserSignature.form-control(type="text" name="signature" required)
-                            .form-group.col
-                                label(for="createUserEndorsements") Endorsements
-                                input#createUserEndorsements.form-control(type="text" name="endorsements" required)
 
                 hr
                 .d-flex.flex-row-reverse

@@ -17,6 +17,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const compression = require('compression');
+const request = require('request');
 
 const USER_ERRORS = require('../libs/users.js').USERS_ERRORS;
 
@@ -88,6 +89,45 @@ exports.createRouter = function (users_instance, ev, middleware) {
 				status = 404;
 			return res.status(status).send({error: error.code, reason: error.message});
 		}
+	});
+
+	// Lookup LEI number from GLEIF
+	router.get('/leinumber/:lei_number', [ middleware.is_admin_or_user ], async (req, res, next) => {
+		const lei_number = req.params.lei_number;
+		try {
+			const httpResponse = res;
+			request({
+				url: `https://leilookup.gleif.org/api/v2/leirecords?lei=${lei_number}`,
+				method: 'GET',
+				json: true 
+			}, function (error, response, leiInfoArray) {
+				if (error) {
+					console.debug(`Failed to find LEI info for ${lei_number}: ${JSON.stringify(error)}`);
+					return httpResponse.status(500).sent({error: error.code, reason: error.message});
+				}
+				console.log(`Found LEI info for: ${lei_number}: ${JSON.stringify(leiInfoArray)}`);
+				// make sure an array is coming back with only one item (since only one
+				//  lei_number in the search)
+				if (leiInfoArray && Array.isArray(leiInfoArray) && leiInfoArray.length === 1) {
+					const leiInfo = leiInfoArray[0];
+					let user_record = {};
+					user_record.lei_number = leiInfo.LEI.$;
+					user_record.legal_name = leiInfo.Entity.LegalName.$;
+					user_record.address_line_1 = leiInfo.Entity.LegalAddress.FirstAddressLine.$;
+					user_record.city = leiInfo.Entity.LegalAddress.City.$;
+					user_record.state = leiInfo.Entity.LegalAddress.Region ? leiInfo.Entity.LegalAddress.Region.$ : "-";
+					user_record.zip_code = leiInfo.Entity.LegalAddress.PostalCode.$;
+					user_record.country = leiInfo.Entity.LegalAddress.Country.$;
+
+					return httpResponse.json(user_record);
+				}
+				return httpResponse.status(500).json({message: "lei search returned no information"});
+			});
+		} catch (error) {
+			console.debug(`Failed to find LEI info for ${lei_number}: ${JSON.stringify(error)}`);
+			return res.status(500).sent({error: error.code, reason: error.message});
+		}
+
 	});
 
 	return router;

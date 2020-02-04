@@ -34,32 +34,16 @@ block content
         .col-md-8
           .form-row
             .form-group.col
-              label(for="infoFirstName") First Name
-              input#infoFirstName.form-control(type="text" readonly disabled)
+              label(for="infoLegalName") Legal Name
+              input#infoLegalName.form-control(type="text" readonly disabled)
+          .form-row
             .form-group.col
-              label(for="infoLastName") Last Name
-              input#infoLastName.form-control(type="text" readonly disabled)
-          .form-row
-            .form-group.col-md-5
-              label(for="infoDoB") Date of Birth
-              input#infoDoB.form-control(type="text" disabled readonly)
-              input#infoDoBTimestamp.form-control(type="hidden" disabled readonly)
-            .form-group.col-md-2
-              label(for="infoHeight") Height
-              input#infoHeight.form-control(type="text" disabled readonly)
-            .form-group.col-md-2
-              label(for="infoWeight") Weight
-              input#infoWeight.form-control(type="text" disabled readonly)
-            .form-group.col-md-3
-              label(for="infoSex") Sex
-              input#infoSex.form-control(type="text" disabled readonly)
+              label(for="infoLEINumber") LEI Number
+              input#infoLEINumber.form-control(type="text" readonly disabled)
           .form-row
             .form-group.col-md-4
-              label(for="infoEyeColor") Eye Color
-              input#infoEyeColor.form-control(type="text" disabled readonly)
-            .form-group.col-md-4
-              label(for="infoHairColor") Hair Color
-              input#infoHairColor.form-control(type="text" disabled readonly)
+              label(for="infoDateIssued") Date Issued
+              input#infoDateIssued.form-control(type="text" disabled readonly)
       .row.info-box.pt-3.mt-4
         .col-md-4
           h4 Address
@@ -85,37 +69,6 @@ block content
             .form-group.col-md-3
               label(for="infoCountry") Country
               input#infoCountry.form-control(type="text" disabled readonly)
-      .row.info-box.pt-3.mt-4
-        .col-md-4
-          h4 License Specific
-        .col-md-8
-          .form-row
-            .form-group.col
-              label(for="infoVehicleClass") Vehicle Class
-              input#infoVehicleClass.form-control(type="text" disabled readonly)
-            .form-group.col
-              label(for="infoDocDiscrim") Doc. Discriminator
-              input#infoDocDiscrim.form-control(type="text" disabled readonly)
-            .form-group.col
-              label(for="infoCustomerID") Customer ID
-              input#infoCustomerID.form-control(type="text" disabled readonly)
-          .form-row
-            .form-group.col
-              label(for="infoDateIssued") Date of Issue
-              input#infoDateIssued.form-control(type="text" disabled readonly)
-            .form-group.col
-              label(for="infoRCI") RCI Codes
-              input#infoRCI.form-control(type="text" disabled readonly)
-            .form-group.col
-              label(for="infoExpires") Expiration Date
-              input#infoExpires.form-control(type="text" disabled readonly)
-          .form-row
-            .form-group.col
-              label(for="infoEndorsements") Endorsements
-              input#infoEndorsements.form-control(type="text" disabled readonly)
-            .form-group.col
-              label(for="infoSignature") Signature
-              input#infoSignature.form-control(type="text" disabled readonly)
       hr
       h3 Your Digital License
       button#connectWalletButton.btn.btn-primary.mt-3 Click to receive your digital license
@@ -178,4 +131,4 @@ block extra
 
 block scripts
   script(src="/javascripts/qrcode.min.js")
-  script(src="/javascripts/connect_with_dmv.js")
+  script(src="/javascripts/connect_with_lei_issuer.js")
