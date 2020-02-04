@@ -42,7 +42,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 	// Status url for monitoring
 	router.get('/status', (req, res, next) => {
 		res.json({
-			message: 'IBM HR is running',
+			message: 'GLEIF is running',
 			status: 'OK'
 		});
 	});
@@ -52,12 +52,12 @@ exports.createRouter = function (users_instance, ev, middleware) {
 		if (req.session && req.session.user_id)
 			return res.redirect('/logout');
 
-		res.render('login', {title: 'IBM HR'});
+		res.render('login', {title: 'GLEIF'});
 	});
 
 	// Admin page
 	router.get('/admin', [ middleware.is_admin ], (req, res, next) => {
-		res.render('admin', {title: 'Employee Administration'});
+		res.render('admin', {title: 'LEI Administration'});
 	});
 
 	// Edit info for a single user
