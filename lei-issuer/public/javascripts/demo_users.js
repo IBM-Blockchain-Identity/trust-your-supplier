@@ -26,7 +26,7 @@ const demo_users = [
 		name: 'Acme',
 		email: 'acme@example.com',
 		attributes: {
-			'lei_number': '549300VKX8CWI7ZGME90',
+			'LEI': '549300VKX8CWI7ZGME90',
 			'password': 'acmepw',
 			portrait: images.acme
 		}
@@ -35,7 +35,7 @@ const demo_users = [
 		name: 'IBM',
 		email: 'ibm@example.com',
 		attributes: {
-			'lei_number': '5493003BXKRGHQHRJV38',
+			'LEI': '5493003BXKRGHQHRJV38',
 			'password': 'ibmpw',
 			portrait: images.ibm
 		}
@@ -64,7 +64,7 @@ window.makelei = function (length) {
 
 const default_attributes = {
 	'legal_name': '',
-	'lei_number': window.makelei(16),
+	'LEI': window.makelei(16),
 	'expiration_date': new Date(Date.now() + 1000 * 3600 * 24 * 365 * 8).toLocaleDateString(),
 	'portrait': images.male1,
 	'date_of_issue': new Date(Date.now()).toLocaleDateString(),
@@ -93,9 +93,9 @@ $(document).ready(() => {
 		const user_data = demo_users[index];
 		console.log(`User data: ${JSON.stringify(user_data)}`);
 
-		// assumes user_data.attributes.lei_number
+		// assumes user_data.attributes.LEI
 		$.ajax({
-			url: `/leinumber/${user_data.attributes.lei_number}`,
+			url: `/leinumber/${user_data.attributes.LEI}`,
 			method: 'GET',
 			contentType: 'application/json'
 		}).done((leiInfo) => {

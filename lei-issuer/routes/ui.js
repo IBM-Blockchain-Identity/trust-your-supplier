@@ -111,7 +111,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 				if (leiInfoArray && Array.isArray(leiInfoArray) && leiInfoArray.length === 1) {
 					const leiInfo = leiInfoArray[0];
 					let user_record = {};
-					user_record.lei_number = leiInfo.LEI.$;
+					user_record.LEI = leiInfo.LEI.$;
 					user_record.legal_name = leiInfo.Entity.LegalName.$;
 					user_record.address_line_1 = leiInfo.Entity.LegalAddress.FirstAddressLine.$;
 					user_record.city = leiInfo.Entity.LegalAddress.City.$;

@@ -1,5 +1,5 @@
 {
-  "name": "IBM HR Login Request",
+  "name": "GLEIF Login Request",
   "version": "1.0",
   "requested_attributes": {
     "LEI": {

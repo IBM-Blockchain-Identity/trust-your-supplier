@@ -225,7 +225,7 @@ function populate_user_info () {
 		'legal_name': {
 			element: '#infoLegalName'
 		},
-		'lei_number': {
+		'LEI': {
 			element: '#infoLEINumber'
 		},
 		'portrait': {

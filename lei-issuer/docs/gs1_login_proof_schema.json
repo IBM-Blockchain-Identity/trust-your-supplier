@@ -1,9 +1,9 @@
 {
-  "name": "LEI Issuer Login Request",
+  "name": "GS1 Login Request",
   "version": "1.0",
   "requested_attributes": {
-    "lei_number": {
-      "name": "lei_number",
+    "LEI": {
+      "name": "LEI",
       "restrictions": []
     }
   }
