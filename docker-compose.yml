@@ -26,7 +26,7 @@ services:
       - AGENT_ADMIN_NAME
       - AGENT_ADMIN_PASSWORD
       - MY_URL=${LEI_ISSUER_URL}
-      - CONNECTION_IMAGE_PROVIDER=none
+      - CONNECTION_IMAGE_PROVIDER=static
       - CARD_IMAGE_RENDERING=none
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
@@ -38,6 +38,7 @@ services:
     image: gleif
     ports:
       - "8091:3000"
+      - "9229:9229"
     volumes:
       - "./gleif/public:/opt/app/public"
       - "./gleif/views:/opt/app/views"
@@ -52,7 +53,7 @@ services:
       - AGENT_ADMIN_NAME
       - AGENT_ADMIN_PASSWORD
       - MY_URL=${GLEIF_URL}
-      - CONNECTION_IMAGE_PROVIDER=none
+      - CONNECTION_IMAGE_PROVIDER=static
       - CARD_IMAGE_RENDERING=none
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
@@ -78,7 +79,7 @@ services:
       - AGENT_ADMIN_NAME
       - AGENT_ADMIN_PASSWORD
       - MY_URL=${ACME_URL}
-      - CONNECTION_IMAGE_PROVIDER=none
+      - CONNECTION_IMAGE_PROVIDER=static
       - CARD_IMAGE_RENDERING=none
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
