@@ -1,5 +1,5 @@
 {
-  "name": "GS1 Login Request",
+  "name": "Bloomberg Login Request",
   "version": "1.0",
   "requested_attributes": {
     "LEI": {

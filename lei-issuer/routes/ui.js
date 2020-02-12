@@ -53,12 +53,12 @@ exports.createRouter = function (users_instance, ev, middleware) {
 		if (req.session && req.session.user_id)
 			return res.redirect('/logout');
 
-		res.render('login', {title: 'GS1'});
+		res.render('login', {title: 'Bloomberg'});
 	});
 
 	// Admin page
 	router.get('/admin', [ middleware.is_admin ], (req, res, next) => {
-		res.render('admin', {title: 'GS1 Administration'});
+		res.render('admin', {title: 'Bloomberg Administration'});
 	});
 
 	// Edit info for a single user
@@ -81,7 +81,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 		const user_id = req.session.user_id;
 		try {
 			const user_doc = await users_instance.read_user(user_id);
-			res.render('user', {title: 'My GS1', user_id: user_id, user_doc: user_doc});
+			res.render('user', {title: 'My Bloomberg', user_id: user_id, user_doc: user_doc});
 
 		} catch (error) {
 			let status = 500;

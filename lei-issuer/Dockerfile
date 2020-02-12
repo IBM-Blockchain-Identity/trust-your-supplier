@@ -17,10 +17,10 @@ ENV STATIC_CARD_FRONT_IMAGE=/opt/app/public/images/card_front_sample.jpg
 ENV STATIC_CARD_BACK_IMAGE=/opt/app/public/images/card_back_sample.jpg
 
 ENV CONNECTION_IMAGE_PROVIDER=static
-ENV CONNECTION_ICON_PATH=/opt/app/docs/gs1.png
+ENV CONNECTION_ICON_PATH=/opt/app/docs/bloomberg.png
 
 ENV LOGIN_PROOF_PROVIDER=file
-ENV LOGIN_PROOF_PATH=/opt/app/docs/gs1_login_proof_schema.json
+ENV LOGIN_PROOF_PATH=/opt/app/docs/bloomberg_login_proof_schema.json
 
 ENV SIGNUP_PROOF_PROVIDER=none
 
