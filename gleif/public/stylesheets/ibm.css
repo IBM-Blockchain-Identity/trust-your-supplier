@@ -64,6 +64,10 @@ h1, h2, h3, h4, h5, h6, label {
     font-weight: bolder
 }
 
+h3.infoFullName {
+  font-size: 1.3rem;
+}
+
 h5 {
   margin-bottom: 1.5rem;
 }
