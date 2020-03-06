@@ -1,0 +1,10 @@
+{
+  "name": "IBM TYS Login Request",
+  "version": "1.0",
+  "requested_attributes": {
+    "tys_identifier_referent": {
+      "name": "tys_identifier",
+      "restrictions": []
+    }
+  }
+}
