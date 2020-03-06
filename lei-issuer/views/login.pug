@@ -9,6 +9,7 @@ block content
             .row
                 .col-md-4
                     img.img-fluid.d-none.d-md-block(src="/images/navbar-logo.png")
+                    img.halfSize.img-fluid.d-none.d-md-block(src="/images/gleif-lei-accredited-logo.png")
 
                 .col-md-8
                     #loginCarousel.carousel.slide(data-ride="false" data-interval="false" data-keyboard="false" data-wrap="false" pause="false")
@@ -23,11 +24,8 @@ block content
                                 form#signupForm
                                     .form-row
                                         .form-group.col-sm-6
-                                            label(for="signupFirstName") First Name
-                                            input#signupFirstName.form-control(type="text" name="first_name" required)
-                                        .form-group.col-sm-6
-                                            label(for="signupLastName") Last Name
-                                            input#signupLastName.form-control(type="text" name="last_name" required)
+                                            label(for="legalName") Legal Name
+                                            input#legalName.form-control(type="text" name="legal_name" required)
                                     .form-row
                                         .form-group.col
                                             label(for="signupAgentURL") Agent URL
@@ -139,7 +137,7 @@ block extra
                                 .d-block.w-100.item-padding.text-primary
                                     i.fas.fa-redo-alt.fa-10x.fa-spin
                                 .carousel-caption
-                                    h5 Checking your license
+                                    h5 Checking your Legal Entity Credential
                                     p Please accept the proof request.
                             .carousel-item
                                 .d-block.w-100.item-padding.text-success

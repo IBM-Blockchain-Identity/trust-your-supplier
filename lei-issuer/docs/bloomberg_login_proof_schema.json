@@ -1,0 +1,10 @@
+{
+  "name": "Bloomberg Login Request",
+  "version": "1.0",
+  "requested_attributes": {
+    "LEI": {
+      "name": "LEI",
+      "restrictions": []
+    }
+  }
+}

@@ -93,7 +93,7 @@ const default_attributes = {
 	'Hire Date': new Date(Date.now() - 1000 * 3600 * 24 * 365 * 4).toLocaleDateString(),
 	'Base Salary': '90000',
 	'portrait': images.male1,
-	'LEI': '5299004RLKTW0WSOAM90',
+	'LEI': '5493001KJTIIGC8Y1R12',
 };
 window.default_attributes = default_attributes;
 

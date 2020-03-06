@@ -222,59 +222,15 @@ async function issue_credential (connection_method) {
 
 function populate_user_info () {
 	const dictionary = {
-		'eye_color': {
-			element: '#infoEyeColor'
+		'legal_name': {
+			element: '#infoLegalName'
 		},
-		'vehicle_class': {
-			element: '#infoVehicleClass'
-		},
-		'last_name': {
-			element: '#infoLastName'
-		},
-		'document_discriminator': {
-			element: '#infoDocDiscrim'
-		},
-		'customer_identifier': {
-			element: '#infoCustomerID'
-		},
-		'height': {
-			element: '#infoHeight'
-		},
-		'cardholder_sex': {
-			element: '#infoSex'
-		},
-		'dob': {
-			type: 'date',
-			element: '#infoDoB'
-		},
-		'dob_timestamp': {
-			element: '#infoDoBTimestamp'
-		},
-		'signature': {
-			element: '#infoSignature'
-		},
-		'endorsements': {
-			element: '#infoEndorsements'
-		},
-		'hair_color': {
-			element: '#infoHairColor'
-		},
-		'expiration_date': {
-			type: 'date',
-			element: '#infoExpires'
-		},
-		'rci_codes': {
-			element: '#infoRCI'
-		},
-		'first_name': {
-			element: '#infoFirstName'
+		'LEI': {
+			element: '#infoLEINumber'
 		},
 		'portrait': {
 			friendly_name: 'Portrait',
 			element: '#userPortraitPreview'
-		},
-		'weight': {
-			element: '#infoWeight'
 		},
 		'date_of_issue': {
 			type: 'date',

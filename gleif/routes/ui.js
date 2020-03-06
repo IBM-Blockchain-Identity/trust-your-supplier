@@ -42,7 +42,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 	// Status url for monitoring
 	router.get('/status', (req, res, next) => {
 		res.json({
-			message: 'Gleif is running',
+			message: 'GLEIF is running',
 			status: 'OK'
 		});
 	});
@@ -57,7 +57,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 
 	// Admin page
 	router.get('/admin', [ middleware.is_admin ], (req, res, next) => {
-		res.render('admin', {title: 'Employee Administration'});
+		res.render('admin', {title: 'LEI Administration'});
 	});
 
 	// Edit info for a single user

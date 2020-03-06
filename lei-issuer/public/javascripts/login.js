@@ -225,24 +225,16 @@ $(document).ready(async () => {
 		};
 		delete formObject.agent_url;
 
-		// Build a complete user record from the form inputs and some hardcoded attributes
+		// Build a complete legal entity record from the form inputs and some hardcoded attributes
 		if (!window.default_attributes)
 			throw new Error('Default user attributes were not found');
 		const user_record = JSON.parse(JSON.stringify(window.default_attributes));
-		delete user_record.portrait; // Force new users to provide a portrait
+		delete user_record.portrait; // Force new legal entities to provide a portrait
 		for (const key in formObject) {
 			user_record[key] = formObject[key];
 		}
 		// Add email to the credential for login convenience
 		user_record['email'] = userEmail;
-
-		// Set dob_timestamp (in days)
-		if (user_record.dob) {
-			const userDoB = user_record.dob;
-			const msInDay = 1000*60*60*24;
-			const userDoBTimestamp = (1000000 - parseInt((new Date(userDoB)).getTime()/msInDay));
-			user_record.dob_timestamp = ''+userDoBTimestamp;
-		}
 
 		// Start the loading animation
 		const loader = $('#signupCreateButton');
