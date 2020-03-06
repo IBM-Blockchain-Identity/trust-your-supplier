@@ -1,5 +1,5 @@
 {
-  "name": "IFT Login Request",
+  "name": "Walmart Supplier Login Request",
   "version": "1.0",
   "requested_attributes": {
     "supplier_identifier": {
