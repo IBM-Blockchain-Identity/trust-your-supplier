@@ -1,0 +1,70 @@
+extends layout
+
+block content
+    .card.mb-3
+        h3.card-header.no-top-border Edit a Supplier
+        .card-body
+            #editUserAlert
+            form#editUserForm
+                .form-row
+                    .form-group.col
+                        label(for="createUserEmail") Email Address
+                        input#createUserEmail.form-control(type="email" placeholder="name@example.com" name="email" required readonly="readonly")
+                .form-row
+                    .form-group.col
+                        label(for="createUserAgentName") Agent URL
+                        input#createUserAgentName.form-control(type="text" name="agent_name" required)
+                .form-row
+                    .form-group.col
+                        label(for="createUserTaxID") Tax ID
+                        input#createUserTaxID.form-control(type="text" name="tax_id" required)
+                hr
+                .form-row
+                    .col-md-4
+                        h4 Address
+                    .col-md-8
+                        .row
+                            .col-md-8
+                                .form-group
+                                    label(for="editUserAddress1") Address 1
+                                    input#editUserAddress1.form-control(type="text" name="address_line_1" required)
+                        .row
+                            .col-md-8
+                                .form-group
+                                    label(for="editUserAddress2") Address 2
+                                    input#editUserAddress2.form-control(type="text" name="address_line_2" required)
+                        .form-row
+                            .form-group.col-md-4
+                                label(for="editUserCity") City
+                                input#editUserCity.form-control(type="text" name="city" required)
+                            .form-group.col-md-3
+                                label(for="editUserState") State
+                                input#editUserState.form-control(type="text" name="state" required)
+                            .form-group.col-md-2
+                                label(for="editUserZipCode") Zip
+                                input#editUserZipCode.form-control(type="text" name="zip_code" required)
+                            .form-group.col-md-3
+                                label(for="editUserCountry") Country
+                                input#editUserCountry.form-control(type="text" name="country" required)
+                hr
+                .form-row
+                    .col-md-4
+                        h4 Supplier Info
+                    .col-md-8
+                        .form-row
+                            .form-group.col
+                                label(for="createSupplierID") Supplier ID
+                                input#createSupplierID.form-control(type="text" name="supplier_identifier" required)
+                            .form-group.col
+                                label(for="createSupplierSince") Supplier Since
+                                input#createSupplierSince.form-control(type="text" name="supplier_since" required)
+                            .form-group.col
+                                label(for="createSupplierRating") Supplier Rating
+                                input#createSupplierRating.form-control(type="text" name="supplier_rating" required)
+                hr
+                .d-flex.flex-row-reverse
+                    button#editUserButton.btn.btn-primary(type="submit" data-original-text="Update" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Updating") Update
+                    button#cancelEditUserButton.btn.btn-primary.mr-2(type="button") Cancel
+
+block scripts
+    script(src="/javascripts/user_edit.js")

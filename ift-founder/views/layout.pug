@@ -17,7 +17,6 @@ html
 
     // My styling
     link(rel='stylesheet', href='/stylesheets/style.css')
-    link(rel="stylesheet", href="/stylesheets/ibm.css")
 
     // Page specific styling
     block styling
@@ -31,12 +30,13 @@ html
     .disclaimer Disclaimer: This web site is a non-functioning mockup intended for technology demonstration purposes only.
 
     // Universal content
-    nav.flex-container.main-nav
-      a.navbar-brand(href="/")
-      .flex-container.flex-grow.flex-fill-right.align-center
-        block navbar
+    nav.navbar.navbar-expand-lg.navbar-light.bg-white.shadow
+      .container
+        a.navbar-brand.font-weight-bold(href="/") IFT
+        block nav
 
-    main.container-fluid
+    main.container.mt-5.rounded
+      block breadcrumb
       // Page specific content
       block content
 

@@ -21,7 +21,7 @@ const compression = require('compression');
 const USER_ERRORS = require('../libs/users.js').USERS_ERRORS;
 
 /**
- * Creates an express router for displaying all the web pages a user can browse to.
+ * Creates an express router representing a Users REST API for managing DMV users.
  * @param {object} users_instance An instance of the Users class with a backend user database.
  * @param {object} ev Information about the app to pass to the UI.
  * @param {Middleware} middleware Authentication middleware used to protect API endpoints.
@@ -42,7 +42,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 	// Status url for monitoring
 	router.get('/status', (req, res, next) => {
 		res.json({
-			message: 'Gleif is running',
+			message: 'IFT Founder is running',
 			status: 'OK'
 		});
 	});
@@ -52,12 +52,12 @@ exports.createRouter = function (users_instance, ev, middleware) {
 		if (req.session && req.session.user_id)
 			return res.redirect('/logout');
 
-		res.render('login', {title: 'GLEIF'});
+		res.render('login', {title: 'IFT'});
 	});
 
 	// Admin page
 	router.get('/admin', [ middleware.is_admin ], (req, res, next) => {
-		res.render('admin', {title: 'Employee Administration'});
+		res.render('admin', {title: 'IFT Founder'});
 	});
 
 	// Edit info for a single user
@@ -80,7 +80,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 		const user_id = req.session.user_id;
 		try {
 			const user_doc = await users_instance.read_user(user_id);
-			res.render('account', {title: 'My Account', user_id: user_id, user_doc: user_doc});
+			res.render('user', {title: 'My IFT', user_id: user_id, user_doc: user_doc});
 
 		} catch (error) {
 			let status = 500;
