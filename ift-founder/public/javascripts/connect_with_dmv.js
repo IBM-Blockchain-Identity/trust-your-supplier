@@ -304,7 +304,7 @@ function populate_user_info () {
 		}
 
 		// Render the profile picture
-		$(dictionary.portrait.element)[0].src = user_doc.personal_info.portrait;
+		$(dictionary.portrait.element)[0].src = user_doc.personal_info.portrait ? user_doc.personal_info.portrait : '';
 
 		// Show first and last name at top of page
 		$('.company-name').html(user_doc.personal_info['company_name']);
