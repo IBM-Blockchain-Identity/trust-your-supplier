@@ -21,7 +21,8 @@ ENV CONNECTION_ICON_PATH=/opt/app/docs/IFT-tile.png
 ENV LOGIN_PROOF_PROVIDER=file
 ENV LOGIN_PROOF_PATH=/opt/app/docs/IFT_login_proof_schema.json
 
-ENV SIGNUP_PROOF_PROVIDER=none
+ENV SIGNUP_PROOF_PROVIDER=account
+ENV SIGNUP_ACCOUNT_PROOF_PATH=/opt/app/docs/account_proof_request.json
 
 ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/IFT_supplier_record.json
 ENV ACCEPT_INCOMING_CONNECTIONS=false

@@ -358,11 +358,8 @@ class Signup {
 			const personal_info = await this.signup_helper.proofToUserRecord(proof);
 			personal_info.email = this.user;
 
-			const user_doc = await this.user_records.create_user(this.user, this.password, personal_info, {
-				agent_name: this.agent_name
-			});
-			logger.debug(`User record: ${JSON.stringify(user_doc)}`);
-
+			// build the credential data that will be issued and look for missing
+			//  data required for the credential and seed it with hardcoded data
 			const cred_attributes = {};
 			for (const index in schema.attr_names) {
 				const attr_name = schema.attr_names[index];
@@ -373,17 +370,42 @@ class Signup {
 					cred_attributes[attr_name] = await this.card_renderer.createCardBack(personal_info);
 				} else {
 
-					// Make sure the user has data for this attribute
-					if (!user_doc.personal_info || [ 'string', 'number' ].indexOf(typeof user_doc.personal_info[attr_name]) < 0) {
-						const err = new Error(`User record was missing data '${attr_name}', which is required for creating a credential`);
-						err.code = SIGNUP_ERRORS.LOGIN_INVALID_USER_ATTRIBUTES;
-						throw err;
+					// Make sure the user has data for these attributes.  Hardcode for now
+					//  missing values
+					if (!personal_info || [ 'string', 'number' ].indexOf(typeof personal_info[attr_name]) < 0) {
+						if (attr_name === 'supplier_identifier') {
+							cred_attributes['supplier_identifier'] = '23-A-6809X24b';
+							personal_info['supplier_identifier'] = cred_attributes['supplier_identifier'];
+						} else if (attr_name === 'supplier_since') {
+							cred_attributes['supplier_since'] = '11-28-1981';
+							personal_info['supplier_since'] = cred_attributes['supplier_since'];
+						} else if (attr_name === 'supplier_rating') {
+							cred_attributes['supplier_rating'] = '92/100';
+							personal_info['supplier_rating'] = cred_attributes['supplier_rating'];
+						} else if (attr_name === 'tax_id') {
+							cred_attributes['tax_id'] = '23459877634';
+							personal_info['tax_id'] = cred_attributes['tax_id'];
+						} else if (attr_name === 'address_line_2') {
+							cred_attributes['address_line_2'] = '_';
+							personal_info['address_line_2'] = cred_attributes['address_line_2'];
+						} else {
+							const err = new Error(`User record was missing data '${attr_name}', which is required for creating a credential`);
+							err.code = SIGNUP_ERRORS.LOGIN_INVALID_USER_ATTRIBUTES;
+							throw err;
+						}
+					} else {
+						if (typeof personal_info[attr_name] === 'number')
+							cred_attributes[attr_name] = '' + personal_info[attr_name];
+						else
+							cred_attributes[attr_name] = personal_info[attr_name];
 					}
-					if (typeof user_doc.personal_info[attr_name] === 'number')
-						cred_attributes[attr_name] = '' + user_doc.personal_info[attr_name];
-					else
-						cred_attributes[attr_name] = user_doc.personal_info[attr_name];				}
+				}
 			}
+
+			const user_doc = await this.user_records.create_user(this.user, this.password, personal_info, {
+				agent_name: this.agent_name
+			});
+			logger.debug(`User record: ${JSON.stringify(user_doc)}`);
 
 			logger.info(`Sending credential offer to ${connection.remote.pairwise.did}`);
 			this.credential = await this.agent.offerCredential({

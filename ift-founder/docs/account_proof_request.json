@@ -1,0 +1,16 @@
+{
+  "name": "Verify LEI",
+  "version": "1.0",
+  "nonce": "<generated>",
+  "requested_attributes": {
+    "LEI_lei": {
+      "name": "LEI",
+      "restrictions": [
+        {
+          "cred_def_id": "<lei_cred_def_id>"
+        }
+      ]
+    }
+  },
+  "requested_predicates": {}
+}
