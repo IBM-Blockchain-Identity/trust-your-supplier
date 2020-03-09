@@ -52,7 +52,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 		if (req.session && req.session.user_id)
 			return res.redirect('/logout');
 
-		res.render('login', {title: 'IFT'});
+		res.render('login', {title: 'IFT Founder'});
 	});
 
 	// Admin page
@@ -80,7 +80,7 @@ exports.createRouter = function (users_instance, ev, middleware) {
 		const user_id = req.session.user_id;
 		try {
 			const user_doc = await users_instance.read_user(user_id);
-			res.render('user', {title: 'My IFT', user_id: user_id, user_doc: user_doc});
+			res.render('user', {title: 'My IFT Founder', user_id: user_id, user_doc: user_doc});
 
 		} catch (error) {
 			let status = 500;

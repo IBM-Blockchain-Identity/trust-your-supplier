@@ -209,3 +209,27 @@ body {
   color: #333333;
   line-height: 24px;
 }
+
+.signup-form {
+  margin: 40px 170px;
+}
+
+#vcSignonModal .spinner-container {
+  color: #00a991;
+  margin: 60px 0;
+}
+
+.verifying-creds-text {
+  margin-top: 60px;
+  margin-bottom: 60px;
+  color: #00a991
+}
+
+.verifying-creds-text span {
+  margin-left: 16px;
+  margin-bottom: 2px;
+  color: #333333;
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: 24px;
+}
