@@ -8,6 +8,10 @@ block content
             form#editUserForm
                 .form-row
                     .form-group.col
+                        label(for="createCompanyName") Company Name
+                        input#createCompanyName.form-control(type="text" name="company_name" required readonly="readonly")
+                .form-row
+                    .form-group.col
                         label(for="createUserEmail") Email Address
                         input#createUserEmail.form-control(type="email" placeholder="name@example.com" name="email" required readonly="readonly")
                 .form-row
