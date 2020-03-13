@@ -1,0 +1,10 @@
+{
+  "name": "IFT Login Request",
+  "version": "1.0",
+  "requested_attributes": {
+    "supplier_identifier": {
+      "name": "supplier_identifier",
+      "restrictions": []
+    }
+  }
+}

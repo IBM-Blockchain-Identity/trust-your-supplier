@@ -1,0 +1,17 @@
+{
+  "name": "Supplier Record",
+  "version": "1.0",
+  "attributes": [
+    "company_name",
+    "address_line_1",
+    "address_line_2",
+    "city",
+    "state",
+    "zip_code",
+    "country",
+    "tax_id",
+    "supplier_identifier",
+    "supplier_since",
+    "supplier_rating"
+  ]
+}

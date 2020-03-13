@@ -232,3 +232,69 @@ spec:
           ports:
             - name: couchdb
               containerPort: 5984
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ift-founder
+spec:
+  selector:
+    app: ift-founder
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ift-founder
+  labels:
+    app: ift-founder
+spec:
+  selector:
+    matchLabels:
+      app: ift-founder
+  template:
+    metadata:
+      labels:
+        app: ift-founder
+    spec:
+      containers:
+        - name: ift-founder
+          image: IFT_FOUNDER_IMAGE_TAG_HERE
+          imagePullPolicy: Always
+          ports:
+            - name: ift-founder
+              containerPort: 3000
+          env:
+            - name: DB_CONNECTION_STRING
+              value: "http://couchdb:5984"
+            - name: DB_USERS
+              value: "ift_founder_db"
+            - name: LOG_LEVEL
+              value: "debug"
+            - name: ACCOUNT_URL
+              value: "ACCOUNT_URL_HERE"
+            - name: AGENT_NAME
+              value: "IFT_FOUNDER_AGENT_NAME_HERE"
+            - name: FRIENDLY_NAME
+              value: "IFT Founder"
+            - name: AGENT_PASSWORD
+              value: "IFT_FOUNDER_AGENT_PASSWORD_HERE"
+            - name: CARD_IMAGE_RENDERING
+              value: "branding_server"
+            - name: BRANDING_SERVER_ENDPOINT
+              value: "BRANDING_SERVER_ENDPOINT_HERE"
+            - name: BRANDING_SERVER_FRONT_TEMPLATE
+              value: "IFTFounderfront"
+            - name: BRANDING_SERVER_BACK_TEMPLATE
+              value: "IFTFounderback"
+            - name: ADMIN_API_USERNAME
+              value: "ADMIN_API_USERNAME_HERE"
+            - name: ADMIN_API_PASSWORD
+              value: "ADMIN_API_PASSWORD_HERE"
+            - name: SESSION_SECRET
+              value: "IFT_FOUNDER_SESSION_SECRET_HERE"
+
