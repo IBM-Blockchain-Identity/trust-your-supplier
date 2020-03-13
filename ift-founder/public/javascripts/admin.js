@@ -468,7 +468,7 @@ function populate_user_table () {
 			columns: [
 				{
 					field: '_id',
-					title: 'User Name',
+					title: 'Supplier Name',
 					sortable: true,
 					searchable: true,
 					formatter: emailLinkFormatter

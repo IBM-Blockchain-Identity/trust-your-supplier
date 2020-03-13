@@ -17,14 +17,14 @@ ENV STATIC_CARD_FRONT_IMAGE=/opt/app/public/images/card_front_sample.jpg
 ENV STATIC_CARD_BACK_IMAGE=/opt/app/public/images/card_back_sample.jpg
 
 ENV CONNECTION_IMAGE_PROVIDER=static
-ENV CONNECTION_ICON_PATH=/opt/app/docs/gov_dmv.png
+ENV CONNECTION_ICON_PATH=/opt/app/docs/gov_logo.png
 
 ENV LOGIN_PROOF_PROVIDER=file
-ENV LOGIN_PROOF_PATH=/opt/app/docs/dmv_login_proof_schema.json
+ENV LOGIN_PROOF_PATH=/opt/app/docs/customer_login_proof_schema.json
 
 ENV SIGNUP_PROOF_PROVIDER=none
 
-ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/gov_dmv_driver_license.json
+ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/customer_cred_def.json
 ENV ACCEPT_INCOMING_CONNECTIONS=false
 
 CMD npm start

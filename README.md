@@ -1,8 +1,10 @@
 # trust-your-supplier
 
 This repository is meant to demonstrate how the Decentralized Identity concepts can be
-demonstrated in an ecosystem where a supplier collects a digital credential from an LEI issuer,
-and leverages the credential to build a relationship (and further credentials) from an IBM Food Trust Network founder, the Trust Your Supplier Network and the IBM Food Trust Network.
+demonstrated in an ecosystem where a supplier collects a digital credential from an LEI 
+issuer, and leverages the credential to build a relationship (and further credentials) 
+from an IBM Food Trust Network founder, the Trust Your Supplier Network and the 
+IBM Food Trust Network.
 
 Play with these samples to learn how to integrate the [openssi-websdk](https://github.com/IBM-Blockchain-Identity/openssi-websdk) into your own website.
 
@@ -11,13 +13,14 @@ For more information on the technology enabling these samples, take a look at [o
 
 ## Developing your own samples
 
-The code used to run the samples you played with above is included, in its entirety, in this repository.  You can quickly
-build your own sample websites from the templates we've provided.
+The code used to run the samples you played with above is included, in its entirety, 
+in this repository.  You can quickly build your own sample websites from the templates 
+we've provided.
 
 ### Setting up
 
-1. Visit your agent account management page and provision three new agents, `leiissuer`, `gleif`, and `acme`.  Make sure the
-box marking the new agents as issuers is checked.
+1. Visit your agent account management page and provision four new agents, `leiissuer`, 
+`gleif`, `iftfounder`, and `acme`.  Make sure the box marking the new agents as issuers is checked.
 
 2. Find your account url and record the passwords for the three agents that you created.  You can find this information
 by visiting your account dashboard, clicking on each agent, clicking the `Add Device` on the `General` page for the agent,
@@ -75,7 +78,15 @@ docker-compose build
     
     ACME_AGENT_NAME=acme
     ACME_AGENT_PASSWORD=****
+
+    IFT_FOUNDER_AGENT_NAME=iftfounder
+    IFT_FOUNDER_AGENT_PASSWORD=****
+
+    COUCHDB_USER_NAME=admin
+    COUCHDB_USER_PASSWORD=****
     ```
+
+    The couchdb requires an admin password. Choose one and populate the field. 
 
 2. Start the issuers.
     ```
@@ -86,11 +97,13 @@ docker-compose build
     - [LEI Issuer](http://localhost:8090)
     - [GLEIF](http://localhost:8091)
     - [ACME](http://localhost:8092)
+    - [IFT_FOUNDER](http://localhost:8093)
     
 4. Read the setup documentation for each app.
     - [LEI Issuer](lei-issuer/README.md#development)
     - [GLEIF](gleif/README.md#development)
     - [ACME](acme/README.md#development)
+    - [IFT_FOUNDER](ift-founder/README.md#development)
 
 4. Browse to the [CouchDB UI](http://localhost:5984/_utils) to see what the apps are writing to the database.
 
@@ -108,8 +121,8 @@ remove, or tweak these values in order to transform the samples into your own pr
 list of the existing configuration parameters:
 
 - `DB_CONNECTION_STRING`: The Couchdb service endpoint that the sample app will use to store user records.
-  `http://couchdb:5984` in the Docker Compose file is what allows the samples to use the `couchdb` container in the Docker
-  Compose environment.
+  `http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984` in the Docker Compose file is what allows the 
+   samples to use the `couchdb` container in the Docker Compose environment.
 - `DB_USERS`: The name of the Couchdb database where user records will be stored.  If the database is not present, the
   app will attempt to create it at startup. ex. `lei_issuer_db`
 - `ACCOUNT_URL`: The URL that is assigned to an account on our Public Agency and associated with a single IBMid.  The
