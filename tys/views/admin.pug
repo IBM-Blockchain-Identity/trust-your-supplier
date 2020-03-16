@@ -17,9 +17,13 @@ block content
                                 li.breadcrumb-item.active IBM TYS Account Administration
                         .form-row
                             .d-flex.justify-content-between.w-100
-                                h3 Create a New Legal Entity
-                                button.btn.btn-secondary(data-toggle="modal" data-target="#autofillModal") Demo Users
+                                h3 Create a New Supplier
+                                button.btn.btn-secondary(data-toggle="modal" data-target="#autofillModal") Demo Suppliers
                         hr.hr-thick
+                        .form-row
+                            .form-group.col
+                                label(for="createCompanyName") Company Name
+                                input#createCompanyName.form-control(type="text" name="company_name" required)
                         .form-row
                             .form-group.col
                                 label(for="createUserEmail") Email Address
@@ -35,29 +39,21 @@ block content
                             .form-group.col
                                 label(for="createUserAgentName") Agent URL
                                 input#createUserAgentName.form-control(type="text" name="agent_name" required)
-                hr
-                .row
-                    .col-md-4
-                        h4 General Info
-                        .mt-2
-                            input#createUserPortrait.inputfile(type="file" name="portrait_selection")
-                            label.btn.btn-secondary(for="createUserPortrait") Upload Photo
-                            input(type="hidden" name="portrait" required)
-                        .text-center.mt-2
-                            img#userPortraitPreview.img-thumbnail.d-none(src="" height="200" alt="Profile Image")
-
-                    .col-md-8
                         .form-row
                             .form-group.col
-                                label(for="createLegalName") Legal Name
-                                input#createLegalName.form-control(type="text" name="legal_name" required)
-                            .form-group.col
-                                label(for="createUserLastName") LEI
-                                input#createLEINumber.form-control(type="text" name="LEI" required)
+                                label(for="createUserTaxID") Tax ID
+                                input#createUserTaxID.form-control(type="text" name="tax_id" required)
+    
                 hr
                 .row
                     .col-md-4
                         h4 Address
+                        .mt-2
+                            input#createUserPortrait.inputfile(type="file" name="portrait_selection")
+                            label.btn.btn-secondary(for="createUserPortrait") Upload Company Logo
+                            input(type="hidden" name="portrait" required)
+                        .text-center.mt-2
+                            img#userPortraitPreview.img-thumbnail.d-none(src="" height="200" alt="Profile Image")
                     .col-md-8
                         .form-row
                             .form-group.col-md-8
@@ -82,25 +78,27 @@ block content
                 hr
                 .row
                     .col-md-4
-                        h4 Certification Info
+                        h4 Supplier Info
                     .col-md-8
                         .form-row
                             .form-group.col
-                                label(for="createUserDateOfIssue") Date Issued
-                                input#createUserDateOfIssue.form-control(type="text" name="date_of_issue" required)
+                                label(for="createSupplierID") Supplier ID
+                                input#createSupplierID.form-control(type="text" name="supplier_identifier" required)
                             .form-group.col
-                                label(for="createUserExpires") Expires
-                                input#createUserExpires.form-control(type="text" name="expiration_date" required)
-
+                                label(for="createSupplierSince") Supplier Since
+                                input#createSupplierSince.form-control(type="text" name="supplier_since" required)
+                            .form-group.col
+                                label(for="createSupplierRating") Supplier Rating
+                                input#createSupplierRating.form-control(type="text" name="supplier_rating" required)
                 hr
                 .d-flex.flex-row-reverse
-                    button#createUserButton.btn.btn-primary(type="submit" data-original-text="Create User" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Creating") Create User
+                    button#createUserButton.btn.btn-primary(type="submit" data-original-text="Create Supplier" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Creating") Create Supplier
 
     .card.mb-3
         .card-header.clearfix
-            h3.card-title.float-left User List
+            h3.card-title.float-left Supplier List
             .btn-toolbar.float-right
-                button.btn.btn-danger.delete-account.mr-2(data-original-text="Delete All Users" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Deleting") Delete All Users
+                button.btn.btn-danger.delete-account.mr-2(data-original-text="Delete All Suppliers" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Deleting") Delete All Suppliers
                 button#refreshUsersButton.btn.btn-primary(type="button" data-original-text="Refresh" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Loading") Refresh
         .card-body
             #userTableAlert
@@ -152,7 +150,7 @@ block extra
                             .col
                                 .form-group
                                     label(for="schema_name") Name:
-                                    input#schema_name.form-control(type="text" placeholder="Legal Entity Credential" value="legal_entity_credential" required)
+                                    input#schema_name.form-control(type="text" placeholder="Driver License" value="driver_license" required)
                             .col
                                 .form-group
                                     label(for="schema_version") Version:
@@ -160,4 +158,4 @@ block extra
                         button#createSchemaButton.btn.btn-primary(type="submit" data-original-text="Submit" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Submitting") Submit
 block scripts
     script(src="/javascripts/admin.js")
-    script(src="/javascripts/demo_users.js")
+    script(src="/javascripts/demo_suppliers.js")

@@ -358,11 +358,8 @@ class Signup {
 			const personal_info = await this.signup_helper.proofToUserRecord(proof);
 			personal_info.email = this.user;
 
-			const user_doc = await this.user_records.create_user(this.user, this.password, personal_info, {
-				agent_name: this.agent_name
-			});
-			logger.debug(`User record: ${JSON.stringify(user_doc)}`);
-
+			// build the credential data that will be issued and look for missing
+			//  data required for the credential and seed it with hardcoded data
 			const cred_attributes = {};
 			for (const index in schema.attr_names) {
 				const attr_name = schema.attr_names[index];
@@ -373,17 +370,36 @@ class Signup {
 					cred_attributes[attr_name] = await this.card_renderer.createCardBack(personal_info);
 				} else {
 
-					// Make sure the user has data for this attribute
-					if (!user_doc.personal_info || [ 'string', 'number' ].indexOf(typeof user_doc.personal_info[attr_name]) < 0) {
-						const err = new Error(`User record was missing data '${attr_name}', which is required for creating a credential`);
-						err.code = SIGNUP_ERRORS.LOGIN_INVALID_USER_ATTRIBUTES;
-						throw err;
+					// Make sure the user has data for these attributes.  Hardcode for now
+					//  missing values
+					if (!personal_info || [ 'string', 'number' ].indexOf(typeof personal_info[attr_name]) < 0) {
+						if (attr_name === 'tys_identifier') {
+							cred_attributes['tys_identifier'] = uuidv4();
+							personal_info['tys_identifier'] = cred_attributes['tys_identifier'];
+						} else if (attr_name === 'member_since') {
+							cred_attributes['member_since'] = new Date().toISOString();
+							personal_info['member_since'] = cred_attributes['member_since'];
+						} else if (attr_name === 'trust_value') {
+							cred_attributes['trust_value'] = '3';
+							personal_info['trust_value'] = cred_attributes['trust_value'];
+						} else {
+							const err = new Error(`User record was missing data '${attr_name}', which is required for creating a credential`);
+							err.code = SIGNUP_ERRORS.LOGIN_INVALID_USER_ATTRIBUTES;
+							throw err;
+						}
+					} else {
+						if (typeof personal_info[attr_name] === 'number')
+							cred_attributes[attr_name] = '' + personal_info[attr_name];
+						else
+							cred_attributes[attr_name] = personal_info[attr_name];
 					}
-					if (typeof user_doc.personal_info[attr_name] === 'number')
-						cred_attributes[attr_name] = '' + user_doc.personal_info[attr_name];
-					else
-						cred_attributes[attr_name] = user_doc.personal_info[attr_name];				}
+				}
 			}
+
+			const user_doc = await this.user_records.create_user(this.user, this.password, personal_info, {
+				agent_name: this.agent_name
+			});
+			logger.debug(`User record: ${JSON.stringify(user_doc)}`);
 
 			logger.info(`Sending credential offer to ${connection.remote.pairwise.did}`);
 			this.credential = await this.agent.offerCredential({

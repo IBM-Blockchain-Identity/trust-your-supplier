@@ -18,6 +18,7 @@ const path = require('path');
 const fs = require('fs');
 const uuidv4 = require('uuid/v4');
 const async = require('async');
+const request = require('request');
 
 const Logger = require('./logger.js').Logger;
 const logger = Logger.makeLogger(Logger.logPrefix(__filename));
@@ -216,15 +217,15 @@ class AccountSignupHelper {
 
 	/**
 	 * Creates a AccountSignupHelper that will create proof requests asking for a drivers license and employment badge.
-	 * @param {string} hr_issuer The agent name for the HR issuer.
-	 * @param {string} dmv_issuer The agent name for the dmv issuer.
+	 * @param {string} gleif_issuer The agent name for the GLIEF issuer.
+	 * @param {string} lei_issuer The agent name for the LEI issuer.
 	 * @param {string} proof_schema_path The path to a proof schema file.
 	 * @param {Agent} agent An Agent instance capable of looking up schemas.
 	 */
-	constructor (hr_issuer, dmv_issuer, proof_schema_path, agent) {
-		if (!hr_issuer || typeof hr_issuer !== 'string')
+	constructor (gleif_issuer, lei_issuer, proof_schema_path, agent) {
+		if (!gleif_issuer || typeof gleif_issuer !== 'string')
 			throw new TypeError('Invalid HR issuer');
-		if (!dmv_issuer || typeof dmv_issuer !== 'string')
+		if (!lei_issuer || typeof lei_issuer !== 'string')
 			throw new TypeError('Invalid DMV issuer');
 		if (!proof_schema_path || typeof proof_schema_path !== 'string')
 			throw new TypeError('Invalid proof schema path for signup helper');
@@ -240,40 +241,40 @@ class AccountSignupHelper {
 		if (!fs.existsSync(proof_schema_path))
 			throw new Error(`File ${proof_schema_path} does not exist`);
 
-		this.hr_issuer = hr_issuer;
-		this.dmv_issuer = dmv_issuer;
+		this.gleif_issuer = gleif_issuer;
+		this.lei_issuer = lei_issuer;
 		this.proof_schema_path = proof_schema_path;
 		this.agent = agent;
 	}
 
 	/**
-	 * Sets up tagged connections to the DMV and HR apps so that we can use the `/credential_definitions?route=trustedDMV:true`
-	 * or `/credential_definitions?route=trustedDMV:true` API calls to get their credential definition list later.
+	 * Sets up tagged connections to the DMV and HR apps so that we can use the `/credential_definitions?route=trustedLEIIssuer:true`
+	 * or `/credential_definitions?route=trustedLEIIssuer:true` API calls to get their credential definition list later.
 	 * @returns {Promise<void>} A promise that resolves when the tagged connections are established.
 	 */
 	async setup () {
 		let to = {};
-		if (this.dmv_issuer.toLowerCase().indexOf('http') >= 0)
-			to.url = this.dmv_issuer;
+		if (this.lei_issuer.toLowerCase().indexOf('http') >= 0)
+			to.url = this.lei_issuer;
 		else
-			to.name = this.dmv_issuer;
+			to.name = this.lei_issuer;
 
 		logger.info(`Setting up a connection to trusted issuer: ${JSON.stringify(to)}`);
 		let connection_offer = await this.agent.createConnection(to, {
-			trustedDMV: 'true'
+			trustedLEIIssuer: 'true'
 		});
 		await this.agent.waitForConnection(connection_offer.id);
 		logger.info(`Connection ${connection_offer.id} established`);
 
 		to = {};
-		if (this.hr_issuer.toLowerCase().indexOf('http') >= 0)
-			to.url = this.hr_issuer;
+		if (this.gleif_issuer.toLowerCase().indexOf('http') >= 0)
+			to.url = this.gleif_issuer;
 		else
-			to.name = this.hr_issuer;
+			to.name = this.gleif_issuer;
 
 		logger.info(`Setting up a connection to trusted issuer: ${JSON.stringify(to)}`);
 		connection_offer = await this.agent.createConnection(to, {
-			trustedHR: 'true'
+			trustedGLEIF: 'true'
 		});
 		await this.agent.waitForConnection(connection_offer.id);
 		logger.info(`Connection ${connection_offer.id} established`);
@@ -285,14 +286,14 @@ class AccountSignupHelper {
 	 * @returns {Promise<void>} A promise that resolves when the connections created for this flow are deleted.
 	 */
 	async cleanup () {
-		logger.info(`Cleaning up connections to the issuers: ${this.dmv_issuer} and ${this.hr_issuer}`);
+		logger.info(`Cleaning up connections to the issuers: ${this.lei_issuer} and ${this.gleif_issuer}`);
 		const connections = await this.agent.getConnections({
 			$or: [
 				{
-					'remote.name': {$in: [ this.hr_issuer, this.dmv_issuer ]}
+					'remote.name': {$in: [ this.gleif_issuer, this.lei_issuer ]}
 				},
 				{
-					'remote.url': {$in: [ this.hr_issuer, this.dmv_issuer ]}
+					'remote.url': {$in: [ this.gleif_issuer, this.lei_issuer ]}
 				}
 			]
 		});
@@ -315,34 +316,34 @@ class AccountSignupHelper {
 			});
 		});
 
-		logger.info(`Looking up credential definitions for issuer ${this.dmv_issuer}`);
-		const dmv_cred_defs = await this.agent.getCredentialDefinitions(null, {trustedDMV: 'true'});
-		logger.debug(`${this.dmv_issuer}'s credential definitions: ${JSON.stringify(dmv_cred_defs, 0, 1)}`);
-		const dmv_restrictions = [];
-		for (const agent_index in dmv_cred_defs.agents) {
-			const agent = dmv_cred_defs.agents[agent_index];
+		logger.info(`Looking up credential definitions for issuer ${this.lei_issuer}`);
+		const lei_issuer_cred_defs = await this.agent.getCredentialDefinitions(null, {trustedLEIIssuer: 'true'});
+		logger.debug(`${this.lei_issuer}'s credential definitions: ${JSON.stringify(lei_issuer_cred_defs, 0, 1)}`);
+		const lei_issuer_restrictions = [];
+		for (const agent_index in lei_issuer_cred_defs.agents) {
+			const agent = lei_issuer_cred_defs.agents[agent_index];
 
 			for (const cred_def_index in agent.results.items) {
 				const cred_def_id = agent.results.items[cred_def_index].id;
 
-				dmv_restrictions.push({cred_def_id: cred_def_id});
+				lei_issuer_restrictions.push({cred_def_id: cred_def_id});
 			}
 		}
 
-		logger.info(`Making sure we still have a connection to ${this.hr_issuer} and ${this.dmv_issuer}`);
+		logger.info(`Making sure we still have a connection to ${this.gleif_issuer} and ${this.lei_issuer}`);
 		await this.setup();
 
-		logger.info(`Looking up credential definitions for issuer ${this.hr_issuer}`);
-		const hr_cred_defs = await this.agent.getCredentialDefinitions(null, {trustedHR: 'true'});
-		logger.debug(`${this.hr_issuer}'s credential definitions: ${JSON.stringify(hr_cred_defs, 0, 1)}`);
-		const hr_restrictions = [];
-		for (const agent_index in hr_cred_defs.agents) {
-			const agent = hr_cred_defs.agents[agent_index];
+		logger.info(`Looking up credential definitions for issuer ${this.gleif_issuer}`);
+		const gleif_cred_defs = await this.agent.getCredentialDefinitions(null, {trustedGLEIF: 'true'});
+		logger.debug(`${this.gleif_issuer}'s credential definitions: ${JSON.stringify(gleif_cred_defs, 0, 1)}`);
+		const gleif_restrictions = [];
+		for (const agent_index in gleif_cred_defs.agents) {
+			const agent = gleif_cred_defs.agents[agent_index];
 
 			for (const cred_def_index in agent.results.items) {
 				const cred_def_id = agent.results.items[cred_def_index].id;
 
-				hr_restrictions.push({cred_def_id: cred_def_id});
+				gleif_restrictions.push({cred_def_id: cred_def_id});
 			}
 		}
 
@@ -355,10 +356,10 @@ class AccountSignupHelper {
 			const attribute = PROOF_FORMAT.requested_attributes[key].name;
 
 			let restrictions = [];
-			if (key.toLowerCase().indexOf('mdl') >= 0) {
-				restrictions = dmv_restrictions;
-			} else if (key.toLowerCase().indexOf('hr') >= 0) {
-				restrictions = hr_restrictions;
+			if (key.toLowerCase().indexOf('_lei') >= 0) {
+				restrictions = lei_issuer_restrictions;
+			} else if (key.toLowerCase().indexOf('_gleif') >= 0) {
+				restrictions = gleif_restrictions;
 			}
 			proof_request.requested_attributes[attribute] = {
 				name: attribute,
@@ -385,31 +386,8 @@ class AccountSignupHelper {
 		logger.debug('(*Verified values from credential)');
 
 		// Make sure the fields we need were provided
-		if (!attributes.first_name || !attributes.firstname) // 'First Name' is converted to 'firstname' in Hyperledger Indy
-			throw new Error('Two verified attestations of first name were not provided');
-
-		if (!attributes.last_name || !attributes.lastname)
-			throw new Error('Two verified attestations of last name were not provided');
-
-		if (!attributes.address_line_1 || !attributes.state || !attributes.zip_code || !attributes.country)
-			throw new Error('A verified attestation of address was not provided');
-
-		if (!attributes.socialsecuritynumber)
-			throw new Error('A verified attestation of a social security number was not provided');
-
-		if (!attributes.dob)
-			throw new Error('A verified attestation of date of birth was not provided');
-
-		// Make sure matchable attributes match
-		if (attributes.first_name.toLowerCase().trim() !== attributes.firstname.toLowerCase().trim())
-			throw new Error('Provided first names did not match');
-
-		if (attributes.last_name.toLowerCase().trim() !== attributes.lastname.toLowerCase().trim())
-			throw new Error('Provided last names did not match');
-
-		// Make sure the user didn't try to sign up from the wrong country
-		if (!attributes.country || [ 'united states', 'us' ].indexOf(attributes.country.toLowerCase().trim()) < 0)
-			throw new Error(`Account signups from country ${attributes.country} are not permitted`);
+		if (!attributes.lei)
+			throw new Error('Attestations of LEI was not provided');
 
 		return verification;
 	}
@@ -425,32 +403,54 @@ class AccountSignupHelper {
 			attributes[attr.name] = attr.value;
 		}
 
-		// Process the date of birth into a timestamp to support predicate requests
-		let dob_timestamp = 1000000;
-		const msInDay = 1000*60*60*24;
-		try {
-			dob_timestamp = (new Date(attributes.dob)).getTime()/msInDay;
-			logger.info('dob_timestamp='+dob_timestamp);
-		} catch (e) {
-			logger.info('Error setting dob_timestamp: ' + JSON.stringify(e));
-			throw new Error('An invalid attestation of date of birth was provided');
+		if (!attributes.lei) {
+			throw new TypeError('Invalid verification');
 		}
+		let leinumber = attributes.lei;
 
-		return {
-			first_name: attributes.first_name,
-			middle_name: attributes.middle_name ? attributes.middle_name : '_',
-			last_name: attributes.last_name,
-			dob: attributes.dob,
-			dob_timestamp: dob_timestamp,
-			address_line_1: attributes.address_line_1,
-			address_line_2: attributes.address_line_2 ? attributes.address_line_2 : '_',
-			ssn: attributes.socialsecuritynumber,
-			state: attributes.state,
-			postal_code: attributes.zip_code,
-			institution_number: 'bbcu123',
-			transit_number: uuidv4(),
-			account_number: uuidv4()
-		};
+		// retrieve LEI information
+		return await this.buildUserRecordFromLEI(leinumber);
+	}
+
+	async buildUserRecordFromLEI(lei_number) {
+		if (!lei_number) {
+			return null;
+		}
+		// retrieve LEI information
+		return new Promise((resolve, reject) => {
+			const options = {
+				method: 'GET',
+				url: `https://leilookup.gleif.org/api/v2/leirecords?lei=${lei_number}`,
+				json: true
+			};
+
+			request(options, (error, response, leiInfoArray) => {
+				if (error) {
+					console.debug(`Failed to find LEI info for ${lei_number}: ${JSON.stringify(error)}`);
+					return httpResponse.status(500).sent({error: error.code, reason: error.message});
+				}
+				console.log(`Found LEI info for: ${lei_number}: ${JSON.stringify(leiInfoArray)}`);
+				// make sure an array is coming back with only one item (since only one
+				//  lei_number in the search)
+				if (leiInfoArray && Array.isArray(leiInfoArray) && leiInfoArray.length === 1) {
+					const leiInfo = leiInfoArray[0];
+					let user_record = {};
+					user_record.LEI = leiInfo.LEI.$;
+					user_record.company_name = leiInfo.Entity.LegalName.$;
+					user_record.address_line_1 = leiInfo.Entity.LegalAddress.FirstAddressLine.$;
+					if (leiInfo.Entity.LegalAddress.AdditionalAddressLine && leiInfo.Entity.LegalAddress.AdditionalAddressLine.length > 0) {
+						user_record.address_line_2 = leiInfo.Entity.LegalAddress.AdditionalAddressLine[0].$;
+					}
+					user_record.city = leiInfo.Entity.LegalAddress.City.$;
+					user_record.state = leiInfo.Entity.LegalAddress.Region ? leiInfo.Entity.LegalAddress.Region.$ : "-";
+					user_record.zip_code = leiInfo.Entity.LegalAddress.PostalCode.$;
+					user_record.country = leiInfo.Entity.LegalAddress.Country.$;
+
+					return resolve(user_record);
+				}
+			});
+
+		});
 	}
 }
 

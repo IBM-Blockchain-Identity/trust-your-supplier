@@ -1,8 +1,9 @@
-# Gov DMV
+# IFT Founder
 
-Gov DMV is an imaginary DMV that issues driver's licenses both physically and digitally.  It is implemented as a Node.js
-[express](https://expressjs.com/) web app that serves up APIs and web pages related to signing up for a digital driver's
-license.
+The IFT Founder represents a founder in the Food Trust Network. Account holders in the IFT represent suppliers to the
+Food Trust Network. These suppliers have valid LEI credentials, received from a valid LEI Issuer. This app is implemented 
+as a Node.js [express](https://expressjs.com/) web app that serves up APIs and web pages related to the Founder's supplier
+network. 
 
 ## Part 1. Issuing a driver's license
 
@@ -56,4 +57,4 @@ app without losing them.
 the Credential Definitions table momentarily.
   ![setup2.png](docs/setup2.png)
 
-Now you can create a demo user and issue a credential.
+Now you can create a demo supplier.

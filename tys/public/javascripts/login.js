@@ -1,12 +1,9 @@
 /**
  © Copyright IBM Corp. 2019, 2019
-
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
-
  http://www.apache.org/licenses/LICENSE-2.0
-
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,299 +11,87 @@
  limitations under the License.
  */
 
-$(document).ready(async () => {
+$(document).ready(() => {
 
-	// Page navigation
 	const loginCarousel = $('#loginCarousel');
 	const loginCarouselSlides = {
-		CREATE_ACCOUNT: 0,
-		VC_LOGIN: 1,
-		USERPASS_LOGIN: 2
+		MOBILE_WALLET_SIGN_ON: 0,
+		USERPASS_SIGN_ON: 1,
+		VC_SIGN_ON: 2
 	};
 
-	$('.open-vc-login').click(async () => {
-		loginCarousel.carousel(loginCarouselSlides.VC_LOGIN);
+	// Show the user id/password sign-on form if the user clicks on the traditional signin links
+	$('.userpassLink').on('click', () => {
+		loginCarousel.carousel(loginCarouselSlides.USERPASS_SIGN_ON);
 	});
 
-	$('.open-signup').click(async () => {
-		loginCarousel.carousel(loginCarouselSlides.CREATE_ACCOUNT);
+	// Show the digital wallet sign-on form if the appropriate links are clicked
+	$('.vcSignonLink').on('click', () => {
+		loginCarousel.carousel(loginCarouselSlides.VC_SIGN_ON);
 	});
 
-	$('.open-userpass-login').click(async () => {
-		loginCarousel.carousel(loginCarouselSlides.USERPASS_LOGIN);
+	// Show the userpass signon input labels when the user id or password form inputs are clicked
+	$('#userID').focus(() => {
+		$('#userIDLabel').css('visibility', 'visible');
+	});
+	$('#userID').focusout(() => {
+		if (!$('#userID').val().trim())
+			$('#userIDLabel').css('visibility', 'hidden');
+	});
+	$('#password').focus(() => {
+		$('#passwordLabel').css('visibility', 'visible');
+	});
+	$('#password').focusout(() => {
+		if (!$('#password').val().trim())
+			$('#passwordLabel').css('visibility', 'hidden');
 	});
 
-	// Display a preview when a user selects a profile pic
-	const portrait_input = $('#signupPortrait');
-	const portrait_preview = $('#userPortraitPreview');
-	const portrait_required = $('#profilePicRequired');
-
-	portrait_input.on('change', () => {
-		const file = portrait_input[0].files[0];
-		const reader = new FileReader();
-
-		console.log(`Reading in file: ${JSON.stringify(file)}`);
-
-		reader.addEventListener('load', () => {
-			console.log('Displaying preview');
-			const initial_image = document.createElement('img');
-			initial_image.src = reader.result;
-
-			initial_image.onload = () => {
-				// Scale down the image while maintaining aspect ratio
-				const maxHeight = 200;
-				const maxWidth = 200;
-				let height = initial_image.height;
-				let width = initial_image.width;
-				if (width > height) {
-					if (width > maxWidth) {
-						height = Math.round(height * maxWidth / width);
-						width = maxWidth;
-					}
-				} else {
-					if (height > maxHeight) {
-						width = Math.round(width * maxHeight / height);
-						height = maxHeight;
-					}
-				}
-
-				// Scale the image down by drawing it to a canvas of a smaller size
-				const canvas = document.createElement('canvas');
-				canvas.width = width;
-				canvas.height = height;
-				const context = canvas.getContext('2d');
-				context.drawImage(initial_image, 0, 0, width, height);
-				const resized_image = canvas.toDataURL('image/jpeg', 0.6);
-
-				// Display the resized image and save the data url to the form
-				portrait_preview[0].src = resized_image;
-				portrait_preview.removeClass('d-none');
-				$('input[name="portrait"]').val(resized_image);
-				portrait_required.addClass('d-none');
-			};
-		}, false);
-
-		if (file) {
-			reader.readAsDataURL(file);
-		}
+	// Show the vc signon input labels when the user id form input is clicked
+	$('#vcUserID').focus(() => {
+		$('#vcUserIDLabel').css('visibility', 'visible');
+	});
+	$('#vcUserID').focusout(() => {
+		if (!$('#vcUserID').val().trim())
+			$('#vcUserIDLabel').css('visibility', 'hidden');
 	});
 
-	// Username and password based login
-	const userpass_form = $('#passwordLoginForm');
-	userpass_form.submit(async (event) => {
+	// Login form
+	$('#loginForm').submit((event) => {
+		console.log('Submit='+$('#loginForm').serialize());
 		event.preventDefault();
 
-		const formArray = userpass_form.serializeArray();
+		const formArray = $('#loginForm').serializeArray();
 		const formObject = {};
 		for (let i = 0; i < formArray.length; i++) {
-			formObject[formArray[i]['name'].trim()] = formArray[i]['value'].trim();
+			formObject[formArray[i]['name']] = formArray[i]['value'].trim();
 		}
 
-		// Start the loading animation
-		const loader = $('#signupCreateButton');
-		loader.html(loader.data('loading-text'));
-		loader.attr('disabled', 'disabled');
+		console.log(`Logging in. ${JSON.stringify(formObject)}`);
+		$.ajax({
+			url: '/login/userpass',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(formObject)
+		}).done((resp) => {
 
-		console.log(`Logging in as ${formObject.email}`);
-		try {
-			await $.ajax({
-				url: '/login/userpass',
-				method: 'POST',
-				dataType: 'json',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					username: formObject.email,
-					password: formObject.password
-				})
-			});
-			console.log(`Logged in as ${formObject.email}, redirecting...`);
-			window.location.href = '/account';
-		} catch (error) {
-			// Stop the loader
-			loader.html(loader.data('original-text'));
-			loader.removeAttr('disabled');
+			console.log(`Login response: ${JSON.stringify(resp)}`);
+			window.location.pathname = '/account';
 
-			console.error(`Failed to log in as ${formObject.email}: ${JSON.stringify(error)}`);
-			const alertText = `Failed to log in as ${formObject.email}. error: ${JSON.stringify(error)}`;
-			$('#userpassLoginAlert').html(window.alertHTML(alertText));
-		}
-	});
-
-	// Make sure new users are being given the password we think they are
-	const signup_password = $('#signupPassword');
-	const signup_confirm_password = $('#signupConfirmPassword');
-	const signup_password_message = $('#signupPasswordMessage');
-
-	$('#signupPassword, #signupConfirmPassword').on('keyup', () => {
-		if (signup_password.val() === signup_confirm_password.val()) {
-			if (signup_password.val())
-				signup_password_message.html('Matching').css('color', 'green');
-			else
-				signup_password_message.html('');
-		} else {
-			signup_password_message.html('Not Matching').css('color', 'red');
-		}
-	});
-
-	// Don't let new users sign up without accepting the agreement
-	const signupCheckbox = $('#signupAgreementCheckbox');
-	const signupButton = $('#signupAcceptButton');
-	const signupCancelButton = $('#signupCancelButton');
-	const agreementModal = $('#signupAgreementModal');
-
-	signupCheckbox.change(() => {
-		if (signupCheckbox.is(':checked')) {
-			signupButton.removeAttr('disabled');
-		} else {
-			signupButton.attr('disabled', 'disabled');
-		}
-	});
-
-	// Create an account from the signup form
-	const signup_form = $('#signupForm');
-	signup_form.submit(async (event) => {
-		console.log(`Submit=${signup_form.serialize()}`);
-		event.preventDefault();
-
-		const formArray = signup_form.serializeArray();
-		const formObject = {};
-		for (let i = 0; i < formArray.length; i++) {
-			formObject[formArray[i]['name'].trim()] = formArray[i]['value'].trim();
-		}
-
-		console.log(`portrait: ${formObject.portrait}`);
-		if (!formObject.portrait) {
-			portrait_required.removeClass('d-none');
-			return;
-		}
-
-		signupButton.attr('disabled', 'disabled');
-		signupCheckbox.prop('checked', false);
-		agreementModal.modal('show');
-		try {
-			console.log('Prompting user to accept signup agreement');
-			await new Promise((resolve, reject) => {
-				let accepted = false;
-
-				agreementModal.on('hidden.bs.modal', () => {
-					if (accepted) resolve();
-					else reject(new Error('Signup agreement was not accepted'));
-					agreementModal.off('hidden.bs.modal');
-					signupButton.off('click');
-				});
-
-				signupButton.click(() => {
-					console.log('Signup agreement accepted');
-					accepted = true;
-					agreementModal.modal('hide');
-				});
-
-				signupCancelButton.click(() => {
-					agreementModal.modal('hide');
-				});
-			});
-		} catch (error) {
-			console.error(`Signup agreement failed: ${error}`);
-			return;
-		}
-
-		formObject.email = `${formObject.email.trim()}@example.com`;
-		const userEmail = formObject.email;
-
-		if (formObject.password !== formObject.confirm_password)
-			return console.error('Passwords must match!');
-
-		const password = formObject.password;
-		delete formObject.password;
-		delete formObject.confirm_password;
-
-		const opts = {
-			agent_name: formObject.agent_url
-		};
-		delete formObject.agent_url;
-
-		// Build a complete legal entity record from the form inputs and some hardcoded attributes
-		if (!window.default_attributes)
-			throw new Error('Default user attributes were not found');
-		const user_record = JSON.parse(JSON.stringify(window.default_attributes));
-		delete user_record.portrait; // Force new legal entities to provide a portrait
-		for (const key in formObject) {
-			user_record[key] = formObject[key];
-		}
-		// Add email to the credential for login convenience
-		user_record['email'] = userEmail;
-
-		// Start the loading animation
-		const loader = $('#signupCreateButton');
-		loader.html(loader.data('loading-text'));
-		loader.attr('disabled', 'disabled');
-
-		const data = JSON.stringify({
-			personal_info: user_record,
-			opts: opts,
-			password: password
+		}).fail((jqXHR, textStatus, errorThrown) => {
+			console.error(`Failed to log in ${errorThrown} ${jqXHR.responseText}`);
 		});
-
-		console.log(`Creating user ${userEmail} with request data ${JSON.stringify(data, 0, 1)}`);
-		let user;
-		try {
-			user = await $.ajax({
-				url: `/api/users/${userEmail}`,
-				method: 'POST',
-				dataType: 'json',
-				contentType: 'application/json',
-				data: data
-			});
-			console.log(`Created user ${userEmail}: ${JSON.stringify(user)}`);
-
-		} catch (error) {
-
-			// Stop the loader
-			loader.html(loader.data('original-text'));
-			loader.removeAttr('disabled');
-
-			console.error(`Failed to create account ${userEmail}: ${JSON.stringify(error)}`);
-			const alertText = `Failed to create account ${userEmail}. error: ${JSON.stringify(error)}`;
-			$('#signupAlert').html(window.alertHTML(alertText));
-			return;
-		}
-
-		console.log(`Signing in as ${userEmail}`);
-		await new Promise((resolve, reject) => {
-			setTimeout(resolve, 3000);
-		});
-		try {
-			await $.ajax({
-				url: '/login/userpass',
-				method: 'POST',
-				dataType: 'json',
-				contentType: 'application/json',
-				data: JSON.stringify({
-					username: userEmail,
-					password: password
-				})
-			});
-			console.log(`Logged in as ${userEmail}, redirecting...`);
-			window.location.href = '/account';
-		} catch (error) {
-			// Stop the loader
-			loader.html(loader.data('original-text'));
-			loader.removeAttr('disabled');
-
-			console.error(`Failed to log in to created account ${userEmail}: ${JSON.stringify(error)}`);
-			const alertText = `Failed to log in to created account ${userEmail}. error: ${JSON.stringify(error)}`;
-			$('#signupAlert').html(window.alertHTML(alertText));
-		}
 	});
 
-	const vcSignonForm = $('#vcLoginForm');
-	const vcSignonModal = $('#vcLoginModal');
-	const vcSignonCarousel = $('#vcLoginCarousel');
+	const vcSignonForm = $('#vcSignonForm');
+	const vcSignonModal = $('#vcSignonModal');
+	const vcSignonCarousel = $('#vcSignonCarousel');
 	const vcSignonCarouselSlides = {
-		ESTABLISHING_CONNECTION: 0,
-		CHECKING_LICENSE: 1,
-		LOGGING_IN: 2,
-		FAILED: 3
+		CREATED: 0,
+		ESTABLISHING_CONNECTION: 1,
+		CHECKING_CREDENTIAL: 2,
+		SUCCEEDED: 3,
+		FAILED: 4
 	};
 
 	// Sign on using VCs
@@ -322,12 +107,12 @@ $(document).ready(async () => {
 
 		// You can only use the sign on api with a username
 		const data = {
-			username: formObject.email,
+			username: formObject.username,
 			connection_method: 'in_band'
 		};
 
 		// Reset the signon carousel
-		vcSignonCarousel.carousel(vcSignonCarouselSlides.ESTABLISHING_CONNECTION);
+		vcSignonCarousel.carousel(vcSignonCarouselSlides.CREATED);
 		// Open the signon modal and keep it open
 		vcSignonModal.modal({
 			backdrop: 'static',
@@ -370,10 +155,10 @@ $(document).ready(async () => {
 				console.log(`Updated login status: ${JSON.stringify(response.status)}`);
 
 				const REMOTE_LOGIN_STEPS = {
-					CREATED: vcSignonCarouselSlides.ESTABLISHING_CONNECTION,
+					CREATED: vcSignonCarouselSlides.CREATED,
 					ESTABLISHING_CONNECTION: vcSignonCarouselSlides.ESTABLISHING_CONNECTION,
-					CHECKING_CREDENTIAL: vcSignonCarouselSlides.CHECKING_LICENSE,
-					FINISHED: vcSignonCarouselSlides.LOGGING_IN,
+					CHECKING_CREDENTIAL: vcSignonCarouselSlides.CHECKING_CREDENTIAL,
+					FINISHED: vcSignonCarouselSlides.SUCCEEDED,
 					STOPPED: vcSignonCarouselSlides.FAILED,
 					ERROR: vcSignonCarouselSlides.FAILED
 				};
@@ -443,17 +228,262 @@ $(document).ready(async () => {
 				});
 			}
 
-		} catch (err) {
-			let error;
-			if (err && err.responseJSON) error = err.responseJSON;
-			else error = err;
-
-			if (error.error)
-				$('#loginErrorCode').html(`Code: ${error.error}`);
-			$('#loginErrorMessage').html(`Reason: ${error.reason}`);
+		} catch (error) {
+			if (error.code)
+				$('#loginErrorCode').html(`Code: ${error.code}`);
+			$('#loginErrorMessage').html(`Reason: ${error.message}`);
 
 			vcSignonCarousel.carousel(vcSignonCarouselSlides.FAILED);
 			console.error(`VC login failed: ${JSON.stringify(error)}`);
+		}
+	});
+
+	const vcSignupModal = $('#vcSignupModal');
+	const vcSignupCarousel = $('#vcSignupCarousel');
+	const vcSignupCarouselSlides = {
+		BEFORE_REGISTERING: 0,
+		ENTER_USER_INFO: 1,
+		COLLECTING_INFO: 2,
+		ESTABLISHING_CONNECTION: 3,
+		CHECKING_CREDENTIAL: 4,
+		ISSUING_CREDENTIAL: 5,
+		FINISHED: 6,
+		NOT_ALLOWED: 7,
+		ALREADY_HAVE_WALLET: 8
+	};
+
+	// Open the signup modal if the user wants to signup for an account and keep it open
+	$('.vcSignupLink').on('click', () => {
+		vcSignupCarousel.carousel(vcSignupCarouselSlides.BEFORE_REGISTERING);
+		vcSignupModal.modal({
+			backdrop: 'static',
+			keyboard: false
+		});
+	});
+
+	// Handle all the cancel buttons/links in the signup flow
+	$('.vcSignupCancel').on('click', () => {
+		vcSignupModal.modal('hide');
+	});
+
+	// Takes us from the "Creds you need" screen to the user signup form
+	$('#credsNextButton').on('click', () => {
+		$('#signupNextButton').removeAttr('disabled');
+		vcSignupCarousel.carousel(vcSignupCarouselSlides.ENTER_USER_INFO);
+	});
+
+	// Show the signup form input labels when the user is filling out the fields
+	const signup_user = $('#signupUserID');
+	const signup_user_label = $('label[for="signupUserID"]');
+	const signup_password = $('#signupPassword');
+	const signup_password_label = $('label[for="signupPassword"]');
+	const signup_confirm_password = $('#signupConfirmPassword');
+	const signup_confirm_password_label = $('label[for="signupConfirmPassword"]');
+	const signup_agent_name = $('#signupAgentName');
+	const signup_agent_name_label = $('label[for="signupAgentName"]');
+
+	signup_user.focus(() => {
+		signup_user_label.css('visibility', 'visible');
+	});
+	signup_user.focusout(() => {
+		if (!signup_user.val().trim())
+			signup_user_label.css('visibility', 'hidden');
+	});
+	signup_password.focus(() => {
+		signup_password_label.css('visibility', 'visible');
+	});
+	signup_password.focusout(() => {
+		if (!signup_password.val().trim())
+			signup_password_label.css('visibility', 'hidden');
+	});
+	signup_confirm_password.focus(() => {
+		signup_confirm_password_label.css('visibility', 'visible');
+	});
+	signup_confirm_password.focusout(() => {
+		if (!signup_confirm_password.val().trim())
+			signup_confirm_password_label.css('visibility', 'hidden');
+	});
+	signup_agent_name.focus(() => {
+		signup_agent_name_label.css('visibility', 'visible');
+	});
+	signup_agent_name.focusout(() => {
+		if (!signup_agent_name.val().trim())
+			signup_agent_name_label.css('visibility', 'hidden');
+	});
+
+	// Make sure new users are being given the password we think they are
+	const password_message = $('#signupPasswordMessage');
+	$('#signupPassword, #signupConfirmPassword').on('keyup', () => {
+		if (signup_password.val() === signup_confirm_password.val()) {
+			if (signup_password.val().trim())
+				password_message.html('Matching').css('color', 'green');
+			else
+				password_message.html('');
+		} else {
+			password_message.html('Not Matching').css('color', 'red');
+		}
+	});
+
+	$('#signupNextButton').on('click', async () => {
+
+		console.log('Submit='+$('#signupForm').serialize());
+
+		const formArray = $('#signupForm').serializeArray();
+		const formObject = {};
+		for (let i = 0; i < formArray.length; i++) {
+			formObject[formArray[i]['name']] = formArray[i]['value'].trim();
+		}
+		console.log(`Signup info: ${JSON.stringify(formObject)}`);
+		const username = `${formObject.username.trim()}@example.com`;
+		const password = formObject.password;
+		const agent_name = formObject.agent_name;
+
+		if (formObject.password !== formObject.confirm_password)
+			return console.error('Passwords must match!');
+
+		const REMOTE_SIGNUP_STEPS = {
+			CREATED: 'CREATED',
+			ESTABLISHING_CONNECTION: 'ESTABLISHING_CONNECTION',
+			CHECKING_CREDENTIAL: 'CHECKING_CREDENTIAL',
+			ISSUING_CREDENTIAL: 'ISSUING_CREDENTIAL',
+			FINISHED: 'FINISHED',
+			STOPPED: 'STOPPED',
+			ERROR: 'ERROR'
+		};
+		$('#signupNextButton').attr('disabled', 'disabled');
+		console.log(`Creating signup for user ${username}`);
+		try {
+			const response = await $.ajax({
+				url: '/signup',
+				method: 'POST',
+				dataType: 'json',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					password: password,
+					username: username,
+					agent_name: agent_name,
+					connection_method: 'in_band'
+				})
+			});
+			console.log(`Signup response: ${JSON.stringify(response)}`);
+
+			let tries_left = 300;
+			const interval = 4000; // milliseconds
+			let connection_shown = false;
+			let verification_shown = false;
+			let credential_shown = false;
+			const running = true;
+			while (running) {
+
+				console.log(`Tries left: ${tries_left--}`);
+				if (tries_left <= 0) {
+					throw new Error('Account signup took too long');
+				}
+
+				let response = await $.ajax({
+					url: '/signup/status',
+					method: 'GET',
+					dataType: 'json',
+					contentType: 'application/json'
+				});
+
+				if (!response || !response.signup || !response.signup.status)
+					throw new Error(`No status information returned in update response: ${JSON.stringify(response)}`);
+				console.log(`Signup status response: ${JSON.stringify(response)}`);
+				const signup_status = response.signup.status;
+				response = response.signup;
+
+				if (signup_status === REMOTE_SIGNUP_STEPS.CREATED) {
+					vcSignupCarousel.carousel(vcSignupCarouselSlides.COLLECTING_INFO);
+
+				} else if (signup_status === REMOTE_SIGNUP_STEPS.ESTABLISHING_CONNECTION || signup_status === REMOTE_SIGNUP_STEPS.CREATED) {
+					vcSignupCarousel.carousel(vcSignupCarouselSlides.ESTABLISHING_CONNECTION);
+
+				} else if (signup_status === REMOTE_SIGNUP_STEPS.CHECKING_CREDENTIAL) {
+					vcSignupCarousel.carousel(vcSignupCarouselSlides.CHECKING_CREDENTIAL);
+
+				} else if (signup_status === REMOTE_SIGNUP_STEPS.ISSUING_CREDENTIAL) {
+					vcSignupCarousel.carousel(vcSignupCarouselSlides.ISSUING_CREDENTIAL);
+
+				} else if (signup_status === REMOTE_SIGNUP_STEPS.FINISHED) {
+					vcSignupCarousel.carousel(vcSignupCarouselSlides.FINISHED);
+
+					// Redirect to account page.  The user's session should be logged in at this point.
+					await new Promise((resolve, reject) => {
+						setTimeout(resolve, 3000);
+					});
+					window.location.href = '/account';
+
+				} else if (signup_status === REMOTE_SIGNUP_STEPS.STOPPED) {
+					vcSignupCarousel.carousel(vcSignupCarouselSlides.NOT_ALLOWED);
+					break;
+				} else if (signup_status === REMOTE_SIGNUP_STEPS.ERROR) {
+					if (response.error)
+						$('#signupErrorCode').html(`Code: ${response.error}`);
+					if (response.reason)
+						$('#signupErrorMessage').html(`Reason: ${response.reason}`);
+
+					if (response.error && response.error === 'USER_ALREADY_EXISTS') {
+						vcSignupCarousel.carousel(vcSignupCarouselSlides.ALREADY_HAVE_WALLET);
+					} else {
+						vcSignupCarousel.carousel(vcSignupCarouselSlides.NOT_ALLOWED);
+					}
+					break;
+				}
+
+				if (use_extension) {
+					// TODO render the connection offer as a QR code
+					if (!connection_shown && response.connection_offer) {
+						connection_shown = true;
+						console.log('Accepting connection offer via extension');
+						try {
+							window.verifyCreds({
+								operation: 'respondToConnectionOffer',
+								connectionOffer: response.connection_offer
+							});
+						} catch (error) {
+							console.error(`Extension failed to show connection offer: ${JSON.stringify(error)}`);
+						}
+					}
+
+					if (!verification_shown && response.verification && response.verification.id) {
+						verification_shown = true;
+						console.log('Accepting proof request via extension');
+						try {
+							window.verifyCreds({
+								operation: 'respondToProofRequest',
+								proofRequestId: response.verification.id
+							});
+						} catch (error) {
+							console.error(`Extension failed to show proof request: ${JSON.stringify(error)}`);
+						}
+					}
+
+					if (!credential_shown && response.credential && response.credential.id) {
+						credential_shown = true;
+						console.log('Accepting credential offer via extension');
+						try {
+							window.verifyCreds({
+								operation: 'respondToCredentialOffer',
+								credentialOfferId: response.credential.id
+							});
+						} catch (error) {
+							console.error(`Extension failed to show credential offer: ${JSON.stringify(error)}`);
+						}
+					}
+				}
+
+				await new Promise((resolve, reject) => {
+					setTimeout(resolve, interval);
+				});
+			}
+
+		} catch (error) {
+			if (error.code)
+				$('#signupErrorCode').html(`Code: ${error.code}`);
+			$('#signupErrorMessage').html(`Reason: ${error.message}`);
+			console.error(`Failed to create signup: ${JSON.stringify(error)}`);
+			vcSignupCarousel.carousel(vcSignupCarouselSlides.NOT_ALLOWED);
 		}
 	});
 

@@ -222,19 +222,28 @@ async function issue_credential (connection_method) {
 
 function populate_user_info () {
 	const dictionary = {
-		'legal_name': {
-			element: '#infoLegalName'
+		'supplier_identifier': {
+			element: '#infoSupplierID'
 		},
-		'LEI': {
-			element: '#infoLEINumber'
+		'member_since': {
+			type: 'date',
+			element: '#infoMemberSince'
+		},
+		'trust_value': {
+			element: '#infoTrustValue'
+		},
+		'tys_identifier': {
+			element: '#infoUserTYSID'
+		},
+		'email': {
+			element: '#userEmail'
+		},
+		'company_name': {
+			element: '#infoCompanyName'
 		},
 		'portrait': {
 			friendly_name: 'Portrait',
 			element: '#userPortraitPreview'
-		},
-		'date_of_issue': {
-			type: 'date',
-			element: '#infoDateIssued'
 		},
 		'address_line_1': {
 			element: '#infoAddress1'
@@ -253,9 +262,6 @@ function populate_user_info () {
 		},
 		'country': {
 			element: '#infoCountry'
-		},
-		'email': {
-			element: '#userEmail'
 		}
 	};
 
@@ -265,7 +271,7 @@ function populate_user_info () {
 	loader.attr('disabled', 'disabled');
 
 	const user_id = window.user_id;
-	console.log(`Getting personal info for ${user_id}`);
+	console.log(`Getting supplier info for ${user_id}`);
 	$.ajax({
 		url: `/api/users/${user_id}`,
 		method: 'GET'
@@ -279,7 +285,7 @@ function populate_user_info () {
 		if (user_doc && user_doc.opts)
 			console.log(`User's agent information: ${JSON.stringify(user_doc.opts, 0, 1)}`);
 
-		console.log(`Got personal info for ${user_id} ${JSON.stringify(user_doc.personal_info, 0, 1)}`);
+		console.log(`Got supplier info for ${user_id} ${JSON.stringify(user_doc.personal_info, 0, 1)}`);
 		for (const schema_key in dictionary) {
 			const config = dictionary[schema_key];
 			if (user_doc.personal_info && user_doc.personal_info[schema_key]) {
@@ -298,22 +304,21 @@ function populate_user_info () {
 		}
 
 		// Render the profile picture
-		$(dictionary.portrait.element)[0].src = user_doc.personal_info.portrait;
+		$(dictionary.portrait.element)[0].src = user_doc.personal_info.portrait ? user_doc.personal_info.portrait : '';
 
 		// Show first and last name at top of page
-		$('.first-name').html(user_doc.personal_info['first_name']);
-		$('.last-name').html(user_doc.personal_info['last_name']);
+		$('.company_name').html(user_doc.personal_info['company_name']);
 
 	}).fail((jqXHR, textStatus, errorThrown) => {
 		// Stop the loader
 		loader.html(loader.data('original-text'));
 		loader.removeAttr('disabled');
 
-		console.error('Failed to get personal info:', errorThrown, jqXHR.responseText);
+		console.error('Failed to get supplier info:', errorThrown, jqXHR.responseText);
 		let alertText = `Failed to get personal info. status: ${textStatus}, error: ${errorThrown}, jqXHR:${JSON.stringify(jqXHR)}`;
 		if (jqXHR.responseJSON && jqXHR.responseJSON.reason) {
 			const response = jqXHR.responseJSON;
-			alertText = `Failed to get personal info. <strong>error</strong>: ${response.error}, <strong>reason</strong>: ${response.reason}`;
+			alertText = `Failed to get supplier info. <strong>error</strong>: ${response.error}, <strong>reason</strong>: ${response.reason}`;
 		}
 		$('#personalInfoAlert').html(window.alertHTML(alertText));
 	});

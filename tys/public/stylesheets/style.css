@@ -11,7 +11,7 @@ html {
   width:100%;padding:5px;
 }
 
-.carousel-item {
+#issuanceCarousel .carousel-item {
   min-height: 500px;
 }
 
@@ -53,11 +53,8 @@ hr {
   border-bottom: 2px solid #eff4ff;
 }
 
-.halfSize {
-  max-width: 50%;
-}
-
 body {
+/*  background-image: linear-gradient(#002c6c, #002c6c), linear-gradient(#eff4ff, #eff4ff);  */
   background-color: #0b77e3;
   height: 100%;
 }
@@ -152,4 +149,85 @@ body {
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
+}
+
+.ift-signon h2 {
+  font-size: 26px;
+  color: #333333;
+  letter-spacing: 0;
+  line-height: 32px;
+}
+
+.ift-signon .btn {
+  width: 217px;
+}
+
+.ift-signon .modal-dialog {
+  margin-top: 242px;
+  max-width: 792px;
+}
+
+.ift-signon .modal-header {
+  border: none;
+  position: absolute;
+  right: 0;
+  z-index: 1000;
+}
+
+.ift-signon .modal-body {
+  padding-bottom: 40px;
+  padding-top: 40px;
+}
+
+.banner-sign-in {
+  width: 334px;
+  height: 331px;
+  background-color: #ffffff;
+  color: #333333;
+  padding: 20px 20px;
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+.banner-sign-in .btn {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.banner-sign-in .btn:hover {
+  background-color: #002a54;
+}
+
+#mobile-sign-on-button {
+  margin-top: 50px;
+}
+
+.banner-sign-in h3 {
+  font-size: 21px;
+  color: #333333;
+  line-height: 24px;
+}
+
+.signup-form {
+  margin: 40px 170px;
+}
+
+#vcSignonModal .spinner-container {
+  color: #00a991;
+  margin: 60px 0;
+}
+
+.verifying-creds-text {
+  margin-top: 60px;
+  margin-bottom: 60px;
+  color: #00a991
+}
+
+.verifying-creds-text span {
+  margin-left: 16px;
+  margin-bottom: 2px;
+  color: #333333;
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: 24px;
 }
