@@ -20,7 +20,7 @@ block content
                 a(href="/") Home
               li.breadcrumb-item.active My Profile
           .form-row
-            h3 Info for: <span class="company-name"></span>
+            h3 Info for: <span class="company_name"></span>
           hr.hr-thick
           .form-row
             .form-group.col
@@ -35,7 +35,7 @@ block content
           .form-row
             .form-group.col
               label(for="infoFirstName") Company Name
-              input#infoCompanyName.form-control(type="text" readonly disabled)
+              input#infoCompanyName.form-control(type="text" name="company_name" readonly disabled)
           .form-row
             .form-group.col
               label(for="infoUserTaxID") Tax ID
@@ -141,4 +141,4 @@ block extra
 
 block scripts
   script(src="/javascripts/qrcode.min.js")
-  script(src="/javascripts/connect_with_dmv.js")
+  script(src="/javascripts/connect_for_cred.js")

@@ -7,8 +7,8 @@ services:
     volumes:
       - "./couchdb/data:/opt/couchdb/data"
     environment:
-      - 'COUCHDB_USER=admin'
-      - 'COUCHDB_PASSWORD=password'
+      - 'COUCHDB_USER=${COUCHDB_USER_NAME}'
+      - 'COUCHDB_PASSWORD=${COUCHDB_USER_PASSWORD}'
 
   lei-issuer:
     build: ./lei-issuer
@@ -19,7 +19,7 @@ services:
       - "./lei-issuer/public:/opt/app/public"
       - "./lei-issuer/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://admin:password@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
       - DB_USERS=lei_issuer_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -45,7 +45,7 @@ services:
       - "./gleif/public:/opt/app/public"
       - "./gleif/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://admin:password@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
       - DB_USERS=gleif_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -71,7 +71,7 @@ services:
       - "./acme/public:/opt/app/public"
       - "./acme/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://admin:password@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
       - DB_USERS=acme_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -93,12 +93,11 @@ services:
     image: ift-founder
     ports:
       - "8093:3000"
-      - "9229:9229"
     volumes:
       - "./ift-founder/public:/opt/app/public"
       - "./ift-founder/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://admin:password@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
       - DB_USERS=ift-founder_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -109,10 +108,41 @@ services:
       - AGENT_ADMIN_PASSWORD
       - SIGNUP_GLEIF_ISSUER_AGENT=${GLEIF_AGENT_NAME}
       - SIGNUP_LEI_ISSUER_AGENT=${LEI_ISSUER_AGENT_NAME}
-      - MY_URL=${ift-founder_URL}
+      - MY_URL=${IFT_FOUNDER_URL}
       - CONNECTION_IMAGE_PROVIDER=none
       - CARD_IMAGE_RENDERING=none
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
     links:
       - couchdb
+
+  tys:
+    build: ./tys
+    image: tys
+    ports:
+      - "8094:3000"
+      - "9229:9229"
+    volumes:
+      - "./tys/public:/opt/app/public"
+      - "./tys/views:/opt/app/views"
+    environment:
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
+      - DB_USERS=tys_db
+      - LOG_LEVEL=debug
+      - ACCOUNT_URL
+      - AGENT_NAME=${TYS_AGENT_NAME}
+      - AGENT_PASSWORD=${TYS_AGENT_PASSWORD}
+      - FRIENDLY_NAME=IBM Trust Your Supplier
+      - AGENT_ADMIN_NAME
+      - AGENT_ADMIN_PASSWORD
+      - SIGNUP_GLEIF_ISSUER_AGENT=${GLEIF_AGENT_NAME}
+      - SIGNUP_LEI_ISSUER_AGENT=${LEI_ISSUER_AGENT_NAME}
+      - MY_URL=${TYS_URL}
+      - CONNECTION_IMAGE_PROVIDER=static
+      - CARD_IMAGE_RENDERING=none
+      - ADMIN_API_USERNAME
+      - ADMIN_API_PASSWORD
+    links:
+        - couchdb
+
+

@@ -225,15 +225,15 @@ function populate_user_info () {
 		'supplier_identifier': {
 			element: '#infoSupplierID'
 		},
-		'supplier_since': {
+		'member_since': {
 			type: 'date',
-			element: '#infoSupplierSince'
+			element: '#infoMemberSince'
 		},
-		'supplier_rating': {
-			element: '#infoSupplierRating'
+		'trust_value': {
+			element: '#infoTrustValue'
 		},
-		'tax_id': {
-			element: '#infoUserTaxID'
+		'tys_identifier': {
+			element: '#infoUserTYSID'
 		},
 		'email': {
 			element: '#userEmail'
@@ -307,7 +307,7 @@ function populate_user_info () {
 		$(dictionary.portrait.element)[0].src = user_doc.personal_info.portrait ? user_doc.personal_info.portrait : '';
 
 		// Show first and last name at top of page
-		$('.company-name').html(user_doc.personal_info['company_name']);
+		$('.company_name').html(user_doc.personal_info['company_name']);
 
 	}).fail((jqXHR, textStatus, errorThrown) => {
 		// Stop the loader

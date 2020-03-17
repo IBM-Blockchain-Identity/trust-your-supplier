@@ -17,9 +17,13 @@ block content
                                 li.breadcrumb-item.active Walmart Administration
                         .form-row
                             .d-flex.justify-content-between.w-100
-                                h3 Create a New User
+                                h3 Create a New Supplier
                                 button.btn.btn-secondary(data-toggle="modal" data-target="#autofillModal") Demo Suppliers
                         hr.hr-thick
+                        .form-row
+                            .form-group.col
+                                label(for="createCompanyName") Company Name
+                                input#createCompanyName.form-control(type="text" name="company_name" required)
                         .form-row
                             .form-group.col
                                 label(for="createUserEmail") Email Address
@@ -154,4 +158,4 @@ block extra
                         button#createSchemaButton.btn.btn-primary(type="submit" data-original-text="Submit" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Submitting") Submit
 block scripts
     script(src="/javascripts/admin.js")
-    script(src="/javascripts/demo_users.js")
+    script(src="/javascripts/demo_suppliers.js")

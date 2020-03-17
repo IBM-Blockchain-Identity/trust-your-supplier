@@ -20,8 +20,8 @@ block content
                         input#createUserAgentName.form-control(type="text" name="agent_name" required)
                 .form-row
                     .form-group.col
-                        label(for="createUserTaxID") Tax ID
-                        input#createUserTaxID.form-control(type="text" name="tax_id" required)
+                        label(for="createUseTYSID") Trust Your Supplier ID
+                        input#createUserTYSID.form-control(type="text" name="tys_identifier" required)
                 hr
                 .form-row
                     .col-md-4
@@ -57,14 +57,11 @@ block content
                     .col-md-8
                         .form-row
                             .form-group.col
-                                label(for="createSupplierID") Supplier ID
-                                input#createSupplierID.form-control(type="text" name="supplier_identifier" required)
+                                label(for="createMemberSince") Member Since
+                                input#infoMemberSince.form-control(type="text" name="member_since" required)
                             .form-group.col
-                                label(for="createSupplierSince") Supplier Since
-                                input#createSupplierSince.form-control(type="text" name="supplier_since" required)
-                            .form-group.col
-                                label(for="createSupplierRating") Supplier Rating
-                                input#createSupplierRating.form-control(type="text" name="supplier_rating" required)
+                                label(for="createTrustValue") Trust Value
+                                input#infoTrustValue.form-control(type="text" name="trust_value" required)
                 hr
                 .d-flex.flex-row-reverse
                     button#editUserButton.btn.btn-primary(type="submit" data-original-text="Update" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Updating") Update

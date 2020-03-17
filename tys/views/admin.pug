@@ -14,12 +14,16 @@ block content
                             ol.breadcrumb.bg-white.pl-0
                                 li.breadcrumb-item
                                     a(href="/") Home
-                                li.breadcrumb-item.active IFT Founder Administration
+                                li.breadcrumb-item.active IBM TYS Account Administration
                         .form-row
                             .d-flex.justify-content-between.w-100
-                                h3 Create a New User
-                                button.btn.btn-secondary(data-toggle="modal" data-target="#autofillModal") Demo Users
+                                h3 Create a New Supplier
+                                button.btn.btn-secondary(data-toggle="modal" data-target="#autofillModal") Demo Suppliers
                         hr.hr-thick
+                        .form-row
+                            .form-group.col
+                                label(for="createCompanyName") Company Name
+                                input#createCompanyName.form-control(type="text" name="company_name" required)
                         .form-row
                             .form-group.col
                                 label(for="createUserEmail") Email Address
@@ -35,50 +39,21 @@ block content
                             .form-group.col
                                 label(for="createUserAgentName") Agent URL
                                 input#createUserAgentName.form-control(type="text" name="agent_name" required)
-                hr
-                .row
-                    .col-md-4
-                        h4 General Info
-                        .mt-2
-                            input#createUserPortrait.inputfile(type="file" name="portrait_selection")
-                            label.btn.btn-secondary(for="createUserPortrait") Upload Photo
-                            input(type="hidden" name="portrait" required)
-                        .text-center.mt-2
-                            img#userPortraitPreview.img-thumbnail.d-none(src="" height="200" alt="Profile Image")
-
-                    .col-md-8
                         .form-row
                             .form-group.col
-                                label(for="createUserFirstName") First Name
-                                input#createUserFirstName.form-control(type="text" name="first_name" required)
-                            .form-group.col
-                                label(for="createUserLastName") Last Name
-                                input#createUserLastName.form-control(type="text" name="last_name" required)
-                        .form-row
-                            .form-group.col-md-5
-                                label(for="createUserDoB") Date of Birth
-                                input#createUserDoB.form-control(type="text" name="dob" required)
-                                input#createUserDoBTimestamp.form-control(type="hidden" name="dob_timestamp")
-                            .form-group.col-md-2
-                                label(for="createUserHeight") Height
-                                input#createUserHeight.form-control(type="text" name="height" required)
-                            .form-group.col-md-2
-                                label(for="createUserWeight") Weight
-                                input#createUserWeight.form-control(type="text" name="weight" required)
-                            .form-group.col-md-3
-                                label(for="createUserSex") Sex
-                                input#createUserSex.form-control(type="text" name="cardholder_sex" required)
-                        .form-row
-                            .form-group.col-md-4
-                                label(for="createUserHairColor") Hair Color
-                                input#createUserHairColor.form-control(type="text" name="hair_color" required)
-                            .form-group.col-md-4
-                                label(for="createUserEyeColor") Eye Color
-                                input#createUserEyeColor.form-control(type="text" name="eye_color" required)
+                                label(for="createUserTYSID") Trust Your Supplier ID
+                                input#createUserTYSID.form-control(type="text" name="tys_identifier" required)
+    
                 hr
                 .row
                     .col-md-4
                         h4 Address
+                        .mt-2
+                            input#createUserPortrait.inputfile(type="file" name="portrait_selection")
+                            label.btn.btn-secondary(for="createUserPortrait") Upload Company Logo
+                            input(type="hidden" name="portrait" required)
+                        .text-center.mt-2
+                            img#userPortraitPreview.img-thumbnail.d-none(src="" height="200" alt="Profile Image")
                     .col-md-8
                         .form-row
                             .form-group.col-md-8
@@ -103,45 +78,24 @@ block content
                 hr
                 .row
                     .col-md-4
-                        h4 License Info
+                        h4 Supplier Info
                     .col-md-8
                         .form-row
                             .form-group.col
-                                label(for="createUserVehicleClass") Vehicle Class
-                                input#createUserVehicleClass.form-control(type="text" name="vehicle_class" required)
+                                label(for="createMemberSince") Member Since
+                                input#infoMemberSince.form-control(type="text" name="member_since" required)
                             .form-group.col
-                                label(for="createUserDiscriminator") Doc. Discriminator
-                                input#createUserDiscriminator.form-control(type="text" name="document_discriminator" required)
-                            .form-group.col
-                                label(for="createUserCustomerID") Customer ID
-                                input#createUserCustomerID.form-control(type="text" name="customer_identifier" required)
-                        .form-row
-                            .form-group.col
-                                label(for="createUserDateOfIssue") Date Issued
-                                input#createUserDateOfIssue.form-control(type="text" name="date_of_issue" required)
-                            .form-group.col
-                                label(for="createUserExpires") Expires
-                                input#createUserExpires.form-control(type="text" name="expiration_date" required)
-                            .form-group.col
-                                label(for="createUserRCI") RCI Codes
-                                input#createUserRCI.form-control(type="text" name="rci_codes" required)
-                        .form-row
-                            .form-group.col
-                                label(for="createUserSignature") Signature
-                                input#createUserSignature.form-control(type="text" name="signature" required)
-                            .form-group.col
-                                label(for="createUserEndorsements") Endorsements
-                                input#createUserEndorsements.form-control(type="text" name="endorsements" required)
-
+                                label(for="createTrustValue") Trust Value
+                                input#infoTrustValue.form-control(type="text" name="trust_value" required)
                 hr
                 .d-flex.flex-row-reverse
-                    button#createUserButton.btn.btn-primary(type="submit" data-original-text="Create User" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Creating") Create User
+                    button#createUserButton.btn.btn-primary(type="submit" data-original-text="Create Supplier" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Creating") Create Supplier
 
     .card.mb-3
         .card-header.clearfix
-            h3.card-title.float-left User List
+            h3.card-title.float-left Supplier List
             .btn-toolbar.float-right
-                button.btn.btn-danger.delete-account.mr-2(data-original-text="Delete All Users" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Deleting") Delete All Users
+                button.btn.btn-danger.delete-account.mr-2(data-original-text="Delete All Suppliers" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Deleting") Delete All Suppliers
                 button#refreshUsersButton.btn.btn-primary(type="button" data-original-text="Refresh" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Loading") Refresh
         .card-body
             #userTableAlert
@@ -201,4 +155,4 @@ block extra
                         button#createSchemaButton.btn.btn-primary(type="submit" data-original-text="Submit" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Submitting") Submit
 block scripts
     script(src="/javascripts/admin.js")
-    script(src="/javascripts/demo_users.js")
+    script(src="/javascripts/demo_suppliers.js")
