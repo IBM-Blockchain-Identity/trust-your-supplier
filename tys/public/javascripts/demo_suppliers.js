@@ -27,8 +27,8 @@ const demo_suppliers = [
 		name: 'Pearson Farms',
 		attributes: {
 			'company_name': 'Pearson Farms',
-			'supplier_since': '04/10/1982',
-			'supplier_rating': '98/100',
+			'member_since': '04/10/1982',
+			'trust_value': '14',
 			'address_line_1': '716 Duck Creek Road',
 			'city': 'Wimberley',
 			'state': 'California',
@@ -41,8 +41,8 @@ const demo_suppliers = [
 		name: 'Doghouse Flowers',
 		attributes: {
 			'company_name': 'Doghouse Flowers',
-			'supplier_since': '04/10/2005',
-			'supplier_rating': '82/100',
+			'member_since': '04/10/2005',
+			'trust_value': '6',
 			'address_line_1': '\#24 Bad Dog Road',
 			'city': 'Barksville',
 			'state': 'Idaho',
@@ -55,8 +55,8 @@ const demo_suppliers = [
 		name: 'Texas Pecan Growers, Inc.',
 		attributes: {
 			'company_name': 'Texas Pecan Growers, Inc.',
-			'supplier_since': '07/15/1947',
-			'supplier_rating': '87/100',
+			'member_since': '07/15/1947',
+			'trust_value': '12',
 			'address_line_1': '2315 Chestnut Street',
 			'city': 'San Antonio',
 			'state': 'Texas',
@@ -69,8 +69,8 @@ const demo_suppliers = [
 		name: 'Frio Valley Produce Company',
 		attributes: {
 			'company_name': 'Frio Valley Produce Company',
-			'supplier_since': '05/10/1968',
-			'supplier_rating': '80/100',
+			'member_since': '05/10/1968',
+			'trust_value': '3',
 			'address_line_1': '552 Gramercy Drive',
 			'city': 'Gonzales',
 			'state': 'New Mexico',
@@ -82,8 +82,8 @@ const demo_suppliers = [
 		name: 'Flemming Prairie Game Hunters',
 		attributes: {
 			'company_name': 'Flemming Prairie Game Hunters',
-			'supplier_since': '09/04/1996',
-			'supplier_rating': '93/100',
+			'member_since': '09/04/1996',
+			'trust_value': '5',
 			'address_line_1': 'P.O. Box 1203-247',
 			'address_line_2': 'FM 236',
 			'city': 'Bandera',
@@ -96,8 +96,8 @@ const demo_suppliers = [
 		name: 'Estilo Winery',
 		attributes: {
 			'company_name': 'Estilo Winery',
-			'supplier_since': '06/28/1895',
-			'supplier_rating': '97/100',
+			'member_since': '06/28/1895',
+			'trust_value': '7',
 			'address_line_1': '377 10th Street',
 			'address_line_2': 'Suite 18',
 			'city': 'Alaverde',
@@ -120,6 +120,7 @@ window.makeid = function (length) {
 };
 
 const default_attributes = {
+	'company_name': '',
 	'document_discriminator': '1a2b3c4d',
 	'tys_identifier': window.makeid(16),
 	'portrait': images.dog,
@@ -130,10 +131,8 @@ const default_attributes = {
 	'state': 'AZ',
 	'zip_code': 98109,
 	'country': 'United States',
-	'supplier_identifier': window.makeid(16),
-	'supplier_since': '11-28-1981',
-	'supplier_rating': '92/100',
-	'tax_id': window.makeid(16)
+	'member_since': '11-28-1981',
+	'trust_value': '4'
 };
 window.default_attributes = default_attributes;
 
