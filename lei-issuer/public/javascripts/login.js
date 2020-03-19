@@ -153,6 +153,7 @@ $(document).ready(async () => {
 	const signupButton = $('#signupAcceptButton');
 	const signupCancelButton = $('#signupCancelButton');
 	const agreementModal = $('#signupAgreementModal');
+	const legalName = $('#legalName');
 
 	signupCheckbox.change(() => {
 		if (signupCheckbox.is(':checked')) {
@@ -161,6 +162,22 @@ $(document).ready(async () => {
 			signupButton.attr('disabled', 'disabled');
 		}
 	});
+
+	let selected_company_data = null;
+	legalName.change(() => {
+		// get the copany data from the demo users structure using based on the
+		//  legal name selection
+		const index = parseInt($('#legalName').val());
+		selected_company_data = demo_users[index];
+		selected_company_data['legal_name'] = selected_company_data.name;
+		selected_company_data['LEI'] = selected_company_data.attributes.LEI;
+		const selected_logo = selected_company_data.attributes.portrait;
+		// Display the resized image and save the data url to the form
+		portrait_preview[0].src = selected_logo;
+		portrait_preview.removeClass('d-none');
+		$('input[name="portrait"]').val(selected_logo);
+		portrait_required.addClass('d-none');
+	})
 
 	// Create an account from the signup form
 	const signup_form = $('#signupForm');
@@ -173,6 +190,11 @@ $(document).ready(async () => {
 		for (let i = 0; i < formArray.length; i++) {
 			formObject[formArray[i]['name'].trim()] = formArray[i]['value'].trim();
 		}
+
+		// get the user_data from the legal name
+		const index = parseInt($('#legalName').val());
+		const user_data = demo_users[index];
+		console.log(`Legal name user data: ${JSON.stringify(selected_company_data)}`);
 
 		console.log(`portrait: ${formObject.portrait}`);
 		if (!formObject.portrait) {
@@ -232,6 +254,9 @@ $(document).ready(async () => {
 		delete user_record.portrait; // Force new legal entities to provide a portrait
 		for (const key in formObject) {
 			user_record[key] = formObject[key];
+		}
+		for (const key in user_data) {
+			user_record[key] = user_data[key];
 		}
 		// Add email to the credential for login convenience
 		user_record['email'] = userEmail;

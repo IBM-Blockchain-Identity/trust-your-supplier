@@ -23,20 +23,18 @@ const images = {
 
 const demo_users = [
 	{
-		name: 'Acme',
+		name: 'Acme Brick Company',
 		email: 'acme@example.com',
 		attributes: {
 			'LEI': '549300VKX8CWI7ZGME90',
-			'password': 'acmepw',
 			portrait: images.acme
 		}
 	},
 	{
-		name: 'IBM',
+		name: 'IBM Credit',
 		email: 'ibm@example.com',
 		attributes: {
-			'LEI': '5493003BXKRGHQHRJV38',
-			'password': 'ibmpw',
+			'LEI': '549300ZNLJL43AQTG067',
 			portrait: images.ibm
 		}
 	}
@@ -85,6 +83,10 @@ $(document).ready(() => {
 		html += `<option value="${index}">${user.name}</option>`;
 	}
 	$('#userTemplate').html(html);
+	if (document.getElementById('legalName')) {
+		html = '<option value="" disabled selected hidden>Choose a company</option>'+html;
+		$('#legalName').html(html);
+	}
 
 	$('#userTemplateForm').submit((event) => {
 		event.preventDefault();

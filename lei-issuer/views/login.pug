@@ -25,7 +25,7 @@ block content
                                     .form-row
                                         .form-group.col-sm-6
                                             label(for="legalName") Legal Name
-                                            input#legalName.form-control(type="text" name="legal_name" required)
+                                            select#legalName.form-control(name="legal_name" required)
                                     .form-row
                                         .form-group.col
                                             label(for="signupAgentURL") Agent URL
@@ -47,10 +47,7 @@ block content
                                             input#signupConfirmPassword.form-control(type="password" name="confirm_password" required)
                                     .form-row
                                         .col-sm-6.col-md-5
-                                            div
-                                                input#signupPortrait.inputfile(type="file" name="portrait_selection")
-                                                label.btn.btn-secondary.btn-lg.btn-block.text-left(for="signupPortrait") Upload Photo
-                                                input(type="hidden" name="portrait" required)
+                                            input(type="hidden" name="portrait" required)
                                             img#userPortraitPreview.img-thumbnail.d-none(src="" height="200" alt="Profile Image")
                                             span#profilePicRequired.text-danger.d-none A profile picture is required.
                                         .d-none.d-md-block.col-md-2
