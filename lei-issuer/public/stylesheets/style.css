@@ -23,6 +23,11 @@ html {
   padding-top: 100px;
 }
 
+form .form-row {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
 .form-control {
   border: 0;
   background-color: #eff4ff;
