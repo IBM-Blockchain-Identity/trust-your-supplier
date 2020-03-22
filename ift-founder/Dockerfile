@@ -6,8 +6,7 @@ WORKDIR /opt/app
 
 # Install NPM dependencies before the code (save time on builds)
 COPY ./package.json /opt/app/package.json
-#RUN npm install --production
-RUN npm install
+RUN npm install --production
 
 # Install our app code
 COPY ./ /opt/app/
@@ -27,4 +26,4 @@ ENV SIGNUP_ACCOUNT_PROOF_PATH=/opt/app/docs/account_proof_request.json
 ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/IFT_supplier_record.json
 ENV ACCEPT_INCOMING_CONNECTIONS=false
 
-CMD npm run debug
+CMD npm run start

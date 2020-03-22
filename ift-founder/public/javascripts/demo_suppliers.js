@@ -43,7 +43,7 @@ const demo_suppliers = [
 			'company_name': 'Doghouse Flowers',
 			'supplier_since': '04/10/2005',
 			'supplier_rating': '82/100',
-			'address_line_1': '\#24 Bad Dog Road',
+			'address_line_1': '#24 Bad Dog Road',
 			'city': 'Barksville',
 			'state': 'Idaho',
 			'zip_code': '94104',

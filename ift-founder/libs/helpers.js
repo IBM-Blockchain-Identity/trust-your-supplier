@@ -16,7 +16,6 @@
 
 const path = require('path');
 const fs = require('fs');
-const uuidv4 = require('uuid/v4');
 const async = require('async');
 const request = require('request');
 
@@ -406,13 +405,13 @@ class AccountSignupHelper {
 		if (!attributes.lei) {
 			throw new TypeError('Invalid verification');
 		}
-		let leinumber = attributes.lei;
+		const leinumber = attributes.lei;
 
 		// retrieve LEI information
 		return await this.buildUserRecordFromLEI(leinumber);
 	}
 
-	async buildUserRecordFromLEI(lei_number) {
+	async buildUserRecordFromLEI (lei_number) {
 		if (!lei_number) {
 			return null;
 		}
@@ -427,14 +426,14 @@ class AccountSignupHelper {
 			request(options, (error, response, leiInfoArray) => {
 				if (error) {
 					console.debug(`Failed to find LEI info for ${lei_number}: ${JSON.stringify(error)}`);
-					return httpResponse.status(500).sent({error: error.code, reason: error.message});
+					return response.status(500).sent({error: error.code, reason: error.message});
 				}
 				console.log(`Found LEI info for: ${lei_number}: ${JSON.stringify(leiInfoArray)}`);
 				// make sure an array is coming back with only one item (since only one
 				//  lei_number in the search)
 				if (leiInfoArray && Array.isArray(leiInfoArray) && leiInfoArray.length === 1) {
 					const leiInfo = leiInfoArray[0];
-					let user_record = {};
+					const user_record = {};
 					user_record.LEI = leiInfo.LEI.$;
 					user_record.company_name = leiInfo.Entity.LegalName.$;
 					user_record.address_line_1 = leiInfo.Entity.LegalAddress.FirstAddressLine.$;
@@ -442,7 +441,7 @@ class AccountSignupHelper {
 						user_record.address_line_2 = leiInfo.Entity.LegalAddress.AdditionalAddressLine[0].$;
 					}
 					user_record.city = leiInfo.Entity.LegalAddress.City.$;
-					user_record.state = leiInfo.Entity.LegalAddress.Region ? leiInfo.Entity.LegalAddress.Region.$ : "-";
+					user_record.state = leiInfo.Entity.LegalAddress.Region ? leiInfo.Entity.LegalAddress.Region.$ : '-';
 					user_record.zip_code = leiInfo.Entity.LegalAddress.PostalCode.$;
 					user_record.country = leiInfo.Entity.LegalAddress.Country.$;
 
