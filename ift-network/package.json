@@ -1,10 +1,10 @@
 {
-  "name": "tys",
-  "author": "Aaron Reed <aaronr@us.ibm.com>",
+  "name": "ift-network",
+  "author": "Diane Flemming <dianefl@us.ibm.com>",
   "contributors": [
     "Bryce Curtis <bcurtis@us.ibm.com",
     "Rachel Radulovich <rachel.elizabeth.radulovich@ibm.com>",
-    "Diane Flemming <dianefl@us.ibm.com>"
+    "Aaron Reed <aaronr@us.ibm.com>"
   ],
   "version": "0.0.0",
   "private": true,

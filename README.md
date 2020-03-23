@@ -79,7 +79,7 @@ docker-compose build
     ACME_AGENT_NAME=acme
     ACME_AGENT_PASSWORD=****
 
-    IFT_FOUNDER_AGENT_NAME=iftfounder
+    IFT_FOUNDER_AGENT_NAME=IFTFounder
     IFT_FOUNDER_AGENT_PASSWORD=****
 
     COUCHDB_USER_NAME=admin

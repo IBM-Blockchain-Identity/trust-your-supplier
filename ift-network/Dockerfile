@@ -16,15 +16,15 @@ COPY ./ /opt/app/
 ENV CARD_IMAGE_RENDERING=none
 
 ENV CONNECTION_IMAGE_PROVIDER=static
-ENV CONNECTION_ICON_PATH=/opt/app/docs/IFT-tile.png
+ENV CONNECTION_ICON_PATH=/opt/app/docs/IFTNetworkLogo.png
 
 ENV LOGIN_PROOF_PROVIDER=file
-ENV LOGIN_PROOF_PATH=/opt/app/docs/IFT_login_proof_schema.json
+ENV LOGIN_PROOF_PATH=/opt/app/docs/IFT_member_login_proof_schema.json
 
 ENV SIGNUP_PROOF_PROVIDER=account
 ENV SIGNUP_ACCOUNT_PROOF_PATH=/opt/app/docs/account_proof_request.json
 
-ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/IFT_supplier_record.json
-ENV ACCEPT_INCOMING_CONNECTIONS=true
+ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/IFT_member_credential.json
+ENV ACCEPT_INCOMING_CONNECTIONS=false
 
 CMD npm run debug
