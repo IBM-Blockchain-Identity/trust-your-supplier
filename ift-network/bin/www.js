@@ -286,7 +286,7 @@ async function start () {
 		if (!ev.SIGNUP_IFT_FOUNDER_ISSUER_AGENT)
 			throw new Error('SIGNUP_IFT_FOUNDER_ISSUER_AGENT must be set in order to use `account` SIGNUP_PROOF_PROVIDER');	
 		logger.info(`${ev.SIGNUP_PROOF_PROVIDER} signup proof selected.  Proof request path: ${ev.SIGNUP_ACCOUNT_PROOF_PATH}`);
-		signup_helper = new Helpers.AccountSignupHelper(ev.SIGNUP_IFT_FOUNDER_ISSUER_AGENT, ev.SIGNUP_TYS_ISSUER_AGENT, ev.SIGNUP_ACCOUNT_PROOF_PATH, agent);
+		signup_helper = new Helpers.AccountSignupHelper(ev.SIGNUP_TYS_ISSUER_AGENT, ev.SIGNUP_IFT_FOUNDER_ISSUER_AGENT, ev.SIGNUP_ACCOUNT_PROOF_PATH, agent);
 		await signup_helper.cleanup();
 		await signup_helper.setup();
 

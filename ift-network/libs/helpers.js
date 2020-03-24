@@ -389,9 +389,6 @@ class AccountSignupHelper {
 		if (!attributes.company_name)
 			throw new Error('A verified attestations of company name was not provided');
 
-		if (!attributes.last_name || !attributes.lastname)
-			throw new Error('Two verified attestations of last name were not provided');
-
 		if (!attributes.address_line_1 || !attributes.address_line_2 || !attributes.state || !attributes.zip_code || !attributes.city || !attributes.country)
 			throw new Error('A verified attestation of address was not provided');
 
