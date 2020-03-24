@@ -9,6 +9,8 @@ spec:
         - LEI_ISSUER_CLUSTER_INGRESS_URL_HERE
         - GLEIF_CLUSTER_INGRESS_URL_HERE
         - ACME_CLUSTER_INGRESS_URL_HERE
+        - IFT_FOUNDER_CLUSTER_INGRESS_URL_HERE
+        - IFT_NETWORK_CLUSTER_INGRESS_URL_HERE
       secretName: credimi-dev
   rules:
     - host: LEI_ISSUER_CLUSTER_INGRESS_URL_HERE
@@ -32,6 +34,20 @@ spec:
             backend:
               serviceName: acme
               servicePort: 80
+    - host: IFT_FOUNDER_CLUSTER_INGRESS_URL_HERE
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: ift-founder
+              servicePort: 80
+    - host: IFT_NETWORK_CLUSTER_INGRESS_URL_HERE
+       http:
+        paths:
+          - path: /
+            backend:
+              serviceName: ift-network
+              servicePort: 80
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -47,6 +63,8 @@ spec:
         - LEI_ISSUER_VANITY_URL_HERE
         - ACME_VANITY_URL_HERE
         - GLEIF_VANITY_URL_HERE
+        - IFT_FOUNDER_VANITY_URL_HERE
+        - IFT_NETWORK_VANITY_URL_HERE
       secretName: vanity
   rules:
     - host: ACME_VANITY_URL_HERE
@@ -69,4 +87,18 @@ spec:
           - path: /
             backend:
               serviceName: gleif
+              servicePort: 80
+    - host: IFT_FOUNDER_VANITY_URL_HERE
+      http:
+        paths:
+          - path: /
+             backend:
+              serviceName: ift-founder
+              servicePort: 80
+    - host: IFT_NETWORK_VANITY_URL_HERE
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: ift-network
               servicePort: 80

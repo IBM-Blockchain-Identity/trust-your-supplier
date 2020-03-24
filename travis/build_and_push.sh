@@ -8,6 +8,8 @@ VERSION=${TRAVIS_TAG:-latest}
 LEI_ISSUER_IMAGE_TAG=${LEI_ISSUER_IMAGE_TAG:-verifycreds/lei-issuer:$VERSION}
 GLEIF_IMAGE_TAG=${GLEIF_IMAGE_TAG:-verifycreds/gleif:$VERSION}
 ACME_IMAGE_TAG=${ACME_IMAGE_TAG:-verifycreds/acme:$VERSION}
+IFT_FOUNDER_IMAGE_TAG=${IFT_FOUNDER_IMAGE_TAG:-verifycreds/ift-founder:$VERSION}
+IFT_NETWORK_IMAGE_TAG=${IFT_NETWORK_IMAGE_TAG:-verifycreds/ift-network:$VERSION}
 TESTHOLDER_IMAGE_TAG=${TESTHOLDER_IMAGE_TAG:-verifycreds/test-holder:$VERSION}
 
 
@@ -27,4 +29,6 @@ build_and_push () {
 build_and_push $LEI_ISSUER_IMAGE_TAG "LEI Issuer" "$DIR/../lei-issuer"
 build_and_push $GLEIF_IMAGE_TAG "GLEIF" "$DIR/../gleif"
 build_and_push $ACME_IMAGE_TAG "ACME" "$DIR/../acme"
+build_and_push $IFT_FOUNDER_IMAGE_TAG "IFT Founder" "$DIR/../ift-founder"
+build_and_push $IFT_NETWORK_IMAGE_TAG "IFT Network" "$DIR/../ift-network"
 build_and_push $TESTHOLDER_IMAGE_TAG "Test Holder" "$DIR/../test_holder"

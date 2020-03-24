@@ -1,7 +1,7 @@
 # IFT Founder
 
 The IFT Founder represents a founder in the Food Trust Network. Account holders in the IFT represent suppliers to the
-IFT Founder. These suppliers have valid LEI credentials, received from a valid LEI Issuer. This app is implemented 
+Food Trust Network. These suppliers have valid LEI credentials, received from a valid LEI Issuer. This app is implemented 
 as a Node.js [express](https://expressjs.com/) web app that serves up APIs and web pages related to the Founder's supplier
 network. 
 

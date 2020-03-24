@@ -24,6 +24,6 @@ ENV SIGNUP_PROOF_PROVIDER=account
 ENV SIGNUP_ACCOUNT_PROOF_PATH=/opt/app/docs/account_proof_request.json
 
 ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/IFT_supplier_record.json
-ENV ACCEPT_INCOMING_CONNECTIONS=false
+ENV ACCEPT_INCOMING_CONNECTIONS=true
 
 CMD npm run start

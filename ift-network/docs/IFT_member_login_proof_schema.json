@@ -1,0 +1,10 @@
+{
+  "name": "IFT Member Login Request",
+  "version": "1.0",
+  "requested_attributes": {
+    "IFT_member_identifier": {
+      "name": "member_identifier",
+      "restrictions": []
+    }
+  }
+}
