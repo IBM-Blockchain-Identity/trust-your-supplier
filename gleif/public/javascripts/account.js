@@ -270,7 +270,14 @@ function populate_user_info () {
 		$(dictionary.portrait.element)[0].src = user_doc.personal_info.portrait;
 
 		$('.infoEmail').html(window.emailParser(user_doc.email));
-		$('.infoFullName').html(`${user_doc.personal_info['First Name']} ${user_doc.personal_info['Last Name']}`);
+		$('.infoFullName').html(`${user_doc.personal_info['Legal_Name']}`);
+		$('dd.lei').html(`${user_doc.personal_info['LEI']}`);
+		$('dd.legalName').html(`${user_doc.personal_info['Legal_Name']}`);
+		$('dd.street').html(`${user_doc.personal_info['Street_Address']}`);
+		$('dd.city').html(`${user_doc.personal_info['City']}`);
+		$('dd.region').html(`${user_doc.personal_info['Region']}`);
+		$('dd.postalCode').html(`${user_doc.personal_info['Postal_Code']}`);
+		$('dd.country').html(`${user_doc.personal_info['Country']}`);
 
 	}).fail((jqXHR, textStatus, errorThrown) => {
 		// Stop the loader
