@@ -69,7 +69,7 @@ class SignupManager {
 			throw new TypeError('Invalid password provided to signup manager');
 		if (!connection_method || typeof connection_method !== 'string')
 			throw new TypeError('Invalid connection method for issuing credentials');
-
+		
 		const signup_id = uuidv4();
 		logger.info(`Creating signup ${signup_id}`);
 		this.signups[signup_id] = new Signup(signup_id, agent_name, this.agent, user, password, this.user_records, this.card_renderer, this.connection_icon_provider, this.signup_helper, connection_method);

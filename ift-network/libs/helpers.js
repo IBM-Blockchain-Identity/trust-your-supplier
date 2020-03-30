@@ -208,8 +208,8 @@ class NullProofHelper {
 }
 
 /**
- * A helper class to mitigate the amount of hardcoding in the signup.js library.  Facilitates using a drivers license
- * and employment credential to get a bank account.
+ * A helper class to mitigate the amount of hardcoding in the signup.js library.  Facilitates using specific
+ * credentials to construct an appropriate proof.
  * @class
  * @implements {SignupHelper}
  */
@@ -218,38 +218,54 @@ class AccountSignupHelper {
 	/**
 	 * Creates a AccountSignupHelper that will create proof requests asking for a TYS Credential and an IFT Founder Supplier ID
 	 * @param {string} tys_issuer The agent name for the TYS issuer.
+	 * @param {string} lei_issuer The agent name for the LEI issuer.
 	 * @param {string} iftfounder_issuer The agent name for the IFT Founder Supplier issuer.
-	 * @param {string} proof_schema_path The path to a proof schema file.
+	 * @param {string} proof_schema_path_tys The path to a proof schema file with a TYS credential definition.
+	 * @param {string} proof_schema_path_lei The path to a proof schema file with an LEI credential definition.
 	 * @param {Agent} agent An Agent instance capable of looking up schemas.
 	 */
-	constructor (tys_issuer, iftfounder_issuer, proof_schema_path, agent) {
+	constructor (tys_issuer, lei_issuer, iftfounder_issuer, proof_schema_path_tys, proof_schema_path_lei, agent) {
 		if (!tys_issuer || typeof tys_issuer !== 'string')
 			throw new TypeError('Invalid TYS issuer');
+		if (!lei_issuer || typeof lei_issuer !== 'string')
+			throw new TypeError('Invalid LEI issuer');
 		if (!iftfounder_issuer || typeof iftfounder_issuer !== 'string')
 			throw new TypeError('Invalid IFT Founder issuer');
-		if (!proof_schema_path || typeof proof_schema_path !== 'string')
+		if (!proof_schema_path_tys || typeof proof_schema_path_tys !== 'string')
+			throw new TypeError('Invalid proof schema path for signup helper');
+		if (!proof_schema_path_lei || typeof proof_schema_path_lei !== 'string')
 			throw new TypeError('Invalid proof schema path for signup helper');
 		if (!agent || typeof agent.getCredentialDefinitions !== 'function')
 			throw new TypeError('Invalid agent');
 
 		// Make sure the proof schema is a json file
-		const ext = path.extname(proof_schema_path).toLowerCase().substring(1); // Remove the period in the extension
+		const ext = path.extname(proof_schema_path_tys).toLowerCase().substring(1); // Remove the period in the extension
 		if (ext !== 'json')
-			throw new Error (`File ${proof_schema_path} is not a json file!`);
+			throw new Error (`File ${proof_schema_path_tys} is not a json file!`);
+
+		const extn = path.extname(proof_schema_path_lei).toLowerCase().substring(1); // Remove the period in the extension
+		if (extn !== 'json')
+				throw new Error (`File ${proof_schema_path_lei} is not a json file!`);
 
 		// Make sure the image exists
-		if (!fs.existsSync(proof_schema_path))
-			throw new Error(`File ${proof_schema_path} does not exist`);
+		if (!fs.existsSync(proof_schema_path_tys))
+			throw new Error(`File ${proof_schema_path_tys} does not exist`);
+
+		if (!fs.existsSync(proof_schema_path_lei))
+			throw new Error(`File ${proof_schema_path_lei} does not exist`);
 
 		this.tys_issuer = tys_issuer;
+		this.lei_issuer = lei_issuer;
 		this.iftfounder_issuer = iftfounder_issuer;
-		this.proof_schema_path = proof_schema_path;
+		this.proof_schema_path_tys = proof_schema_path_tys;
+		this.proof_schema_path_lei = proof_schema_path_lei;
 		this.agent = agent;
 	}
 
 	/**
-	 * Sets up tagged connections to the TYS and IFT Founder apps so that we can use the `/credential_definitions?route=trustedTYSIssuer:true`
-	 * or `/credential_definitions?route=trustedIFTFounderIssuer:true` API calls to get their credential definition list later.
+	 * Sets up tagged connections to the TYS, LEI, and IFT Founder apps so that we can use the `/credential_definitions?route=trustedTYSIssuer:true`
+	 * or `/credential_definitions?route=trustedLEIIssuer:true`, alongside the `/credential_definitions?route=trustedIFTFounderIssuer:true` API 
+	 * calls to get their credential definition list later.
 	 * @returns {Promise<void>} A promise that resolves when the tagged connections are established.
 	 */
 	async setup () {
@@ -278,6 +294,19 @@ class AccountSignupHelper {
 		});
 		await this.agent.waitForConnection(connection_offer.id);
 		logger.info(`Connection ${connection_offer.id} established`);
+
+		to = {};
+		if (this.lei_issuer.toLowerCase().indexOf('http') >= 0)
+			to.url = this.lei_issuer;
+		else
+			to.name = this.lei_issuer;
+
+		logger.info(`Setting up a connection to trusted issuer: ${JSON.stringify(to)}`);
+		connection_offer = await this.agent.createConnection(to, {
+			trustedLEIIssuer: 'true'
+		});
+		await this.agent.waitForConnection(connection_offer.id);
+		logger.info(`Connection ${connection_offer.id} established`);
 	}
 
 	/**
@@ -286,14 +315,14 @@ class AccountSignupHelper {
 	 * @returns {Promise<void>} A promise that resolves when the connections created for this flow are deleted.
 	 */
 	async cleanup () {
-		logger.info(`Cleaning up connections to the issuers: ${this.tys_issuer} and ${this.iftfounder_issuer}`);
+		logger.info(`Cleaning up connections to the issuers: ${this.tys_issuer}, ${this.lei_issuer}, and ${this.iftfounder_issuer}`);
 		const connections = await this.agent.getConnections({
 			$or: [
 				{
-					'remote.name': {$in: [ this.tys_issuer, this.iftfounder_issuer ]}
+					'remote.name': {$in: [ this.tys_issuer, this.lei_issuer, this.iftfounder_issuer ]}
 				},
 				{
-					'remote.url': {$in: [ this.tys_issuer, this.iftfounder_issuer ]}
+					'remote.url': {$in: [ this.tys_issuer, this.lei_issuer, this.iftfounder_issuer ]}
 				}
 			]
 		});
@@ -306,8 +335,9 @@ class AccountSignupHelper {
 
 	async getProofSchema (opts) {
 		const PROOF_FORMAT = await new Promise((resolve, reject) => {
-			logger.info(`Loading proof schema: ${this.proof_schema_path}`);
-			fs.readFile(this.proof_schema_path, (error, file) => {
+			// Choose the proof schema path based on the user's input: TYS or LEI
+			logger.info(`Loading proof schema: ${this.proof_schema_path_tys}`);
+			fs.readFile(this.proof_schema_path_tys, (error, file) => {
 				if (error) return reject(error);
 				file = JSON.parse(file);
 				if (!file.name || !file.version)
@@ -316,7 +346,7 @@ class AccountSignupHelper {
 			});
 		});
 
-		logger.info(`Making sure we still have a connection to ${this.iftfounder_issuer} and ${this.tys_issuer}`);
+		logger.info(`Making sure we still have a connection to ${this.iftfounder_issuer}, ${this.tys_issuer} and ${this.lei_issuer}`);
 		await this.setup();
 
 		logger.info(`Looking up credential definitions for issuer ${this.iftfounder_issuer}`);
@@ -347,6 +377,20 @@ class AccountSignupHelper {
 			}
 		}
 
+		logger.info(`Looking up credential definitions for issuer ${this.lei_issuer}`);
+		const lei_issuer_cred_defs = await this.agent.getCredentialDefinitions(null, {trustedLEIIssuer: 'true'});
+		logger.debug(`${this.lei_issuer}'s credential definitions: ${JSON.stringify(lei_issuer_cred_defs, 0, 1)}`);
+		const lei_issuer_restrictions = [];
+		for (const agent_index in lei_issuer_cred_defs.agents) {
+			const agent = lei_issuer_cred_defs.agents[agent_index];
+
+			for (const cred_def_index in agent.results.items) {
+				const cred_def_id = agent.results.items[cred_def_index].id;
+
+				lei_issuer_restrictions.push({cred_def_id: cred_def_id});
+			}
+		}
+
 		const proof_request = {
 			'name': PROOF_FORMAT.name,
 			'version': PROOF_FORMAT.version + Date.now(),
@@ -360,6 +404,8 @@ class AccountSignupHelper {
 				restrictions = tys_issuer_restrictions;
 			} else if (key.toLowerCase().indexOf('ift') >= 0) {
 				restrictions = iftfounder_issuer_restrictions;
+			} else if (key.toLowerCase().indexOf('lei') >= 0) {
+				restrictions = lei_issuer_restrictions;
 			}
 			proof_request.requested_attributes[attribute] = {
 				name: attribute,
@@ -386,6 +432,7 @@ class AccountSignupHelper {
 		logger.debug('(*Verified values from credential)');
 
 		// Make sure the fields we need were provided
+		// These come from the IFT Founder
 		if (!attributes.company_name)
 			throw new Error('A verified attestations of company name was not provided');
 
@@ -401,14 +448,9 @@ class AccountSignupHelper {
 		if (!attributes.supplier_since)
 			throw new Error('A verified attestation of supplier since was not provided');
 
-		if (!attributes.tys_identifier)
-			throw new Error('A verified attestation of TYS identifier was not provided');
-
-		if (!attributes.trust_value)
-			throw new Error('A verified attestation of trust value was not provided');
-
-		if (!attributes.member_since)
-			throw new Error('A verified attestation of member since was not provided');
+			// These come from the TYS or the LEI, and we need either TYS creds or LEI cred
+		if ((!attributes.lei) && (!attributes.tys_identifier || !attributes.trust_value || !attributes.member_since ))
+			throw new Error('A verified attestation of the required TYS identifier or LEI was not provided');
 
 		return verification;
 	}
@@ -439,7 +481,8 @@ class AccountSignupHelper {
 			tys_identifier: attributes.tys_identifier,
 			trust_value: attributes.trust_value,
 			member_since: attributes.member_since,
-			member_identifier: uuidv4()
+			member_identifier: uuidv4(),
+			lei: attributes.lei
 		};
 	}
 }

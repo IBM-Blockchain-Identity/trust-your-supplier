@@ -111,8 +111,11 @@ block extra
                                     .col-sm-6
                                         p.text-decoration-bolder You will need the following credentials:
                                         ul
-                                            li Trust Your Supplier Credential
-                                            li IFT Founder Credential
+                                            li An IFT Founder Credential
+                                            li And one of the following: 
+                                            ul
+                                                li Trust Your Supplier Credential 
+                                                li LEI Credential
                                     .col-sm-3
                                 div
                                     button#credsNextButton.btn.btn-primary Next
@@ -138,6 +141,14 @@ block extra
                                         .form-group
                                             label.hidden-form-label(for="signupAgentName") Agent URL
                                             input#signupAgentName.form-control(type="text" name="agent_name" placeholder="Agent URL" required)
+                                        .form-group
+                                            label.hidden-form-label(form="signupCredentialType") Choose Credential Type  
+                                            br                                        
+                                            input#signupCredentialType(type='radio' name='credential_type' value='TYS' required)
+                                            |  TYS
+                                            br
+                                            input#signupCredentialType(type='radio' name='credential_type' value='LEI' required)
+                                            |  LEI
                                 div
                                     button#signupNextButton.btn.btn-primary(disabled) Next
                                     a.vcSignupCancel.ml-2.text-decoration-underline(href="#") Cancel
