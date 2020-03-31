@@ -143,13 +143,13 @@ block extra
                                         .form-group
                                             label.hidden-form-label(for="signupAgentName") Agent URL
                                             input#signupAgentName.form-control(type="text" name="agent_name" placeholder="Agent URL" required)
-                                        .form-group
+                                        .form-group(title="Choose an option to designate your secondary credential type")
                                             label.hidden-form-label(form="signupCredentialType") Choose Secondary Credential Type  
                                             br                                        
-                                            input#signupCredentialType(type='radio' name='credential_type' value='TYS' required title="Click here to use Trust Your Supplier as your secondary credential")
+                                            input#signupCredentialType(type='radio' name='credential_type' value='TYS' required)
                                             |  TYS
                                             br
-                                            input#signupCredentialType(type='radio' name='credential_type' value='LEI' checked="checked" required title="Click here to use an LEI as your secondary credential")
+                                            input#signupCredentialType(type='radio' name='credential_type' value='LEI' checked="checked" required)
                                             |  LEI
                                 div
                                     button#signupNextButton.btn.btn-primary(disabled) Next
