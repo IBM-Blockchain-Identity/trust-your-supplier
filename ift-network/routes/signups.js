@@ -102,9 +102,15 @@ exports.createRouter = function (signup_manager) {
 				error: SIGNUP_API_ERRORS.MISSING_REQUIRED_PARAMETERS,
 				reason: 'Invalid connection_method for issuing the credential'
 			});
-		
 
-		const signup_id = signup_manager.create_signup(username, agent_name, password, req.body.connection_method);
+		if (!req.body.credential_type || typeof req.body.credential_type !== 'string') {
+			return res.status(400).json({
+				error: SIGNUP_API_ERRORS.MISSING_REQUIRED_PARAMETERS,
+				reason: 'Invalid credential_type for verifying the credentials'
+			});
+		}
+
+		const signup_id = signup_manager.create_signup(username, agent_name, password, req.body.connection_method, req.body.credential_type);
 		req.session.signup = signup_id;
 		res.status(201).json({
 			message: 'Signup process initiated',

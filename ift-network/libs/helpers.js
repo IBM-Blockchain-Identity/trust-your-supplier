@@ -336,8 +336,15 @@ class AccountSignupHelper {
 	async getProofSchema (opts) {
 		const PROOF_FORMAT = await new Promise((resolve, reject) => {
 			// Choose the proof schema path based on the user's input: TYS or LEI
-			logger.info(`Loading proof schema: ${this.proof_schema_path_tys}`);
-			fs.readFile(this.proof_schema_path_tys, (error, file) => {
+			let proof_schema_path = null;
+			if (opts && opts.uselei && opts.uselei === true) {
+				logger.info(`Loading proof schema: ${this.proof_schema_path_lei}`);
+				proof_schema_path = this.proof_schema_path_lei;
+			} else {
+				logger.info(`Loading proof schema: ${this.proof_schema_path_tys}`);
+				proof_schema_path = this.proof_schema_path_tys;
+			}
+			fs.readFile(proof_schema_path, (error, file) => {
 				if (error) return reject(error);
 				file = JSON.parse(file);
 				if (!file.name || !file.version)

@@ -372,7 +372,8 @@ $(document).ready(() => {
 					password: password,
 					username: username,
 					agent_name: agent_name,
-					connection_method: 'in_band'
+					connection_method: 'in_band',
+					credential_type: formObject['credential_type']
 				})
 			});
 			console.log(`Signup response: ${JSON.stringify(response)}`);
