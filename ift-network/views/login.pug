@@ -115,14 +115,16 @@ block extra
                                             li And one of the following: 
                                             ul
                                                 li Trust Your Supplier Credential 
-                                                li LEI Credential
+                                                li Digital LEI
                                     .col-sm-3
                                 div
                                     button#credsNextButton.btn.btn-primary Next
                                     a.vcSignupCancel.ml-2.text-decoration-underline(href="#") Cancel
 
                             .carousel-item.text-center
-                                h2 Please enter an email, password, and agent URL to create a IFT Network member account
+                                h2 Create an IFT Network member account
+                                    p.
+                                    h5 Please populate the following required fields
                                 .signup-form.text-left
                                     form#signupForm
                                         .form-group
@@ -142,12 +144,12 @@ block extra
                                             label.hidden-form-label(for="signupAgentName") Agent URL
                                             input#signupAgentName.form-control(type="text" name="agent_name" placeholder="Agent URL" required)
                                         .form-group
-                                            label.hidden-form-label(form="signupCredentialType") Choose Credential Type  
+                                            label.hidden-form-label(form="signupCredentialType") Choose Secondary Credential Type  
                                             br                                        
-                                            input#signupCredentialType(type='radio' name='credential_type' value='TYS' required)
+                                            input#signupCredentialType(type='radio' name='credential_type' value='TYS' required title="Click here to use Trust Your Supplier as your secondary credential")
                                             |  TYS
                                             br
-                                            input#signupCredentialType(type='radio' name='credential_type' value='LEI' checked="checked" required)
+                                            input#signupCredentialType(type='radio' name='credential_type' value='LEI' checked="checked" required title="Click here to use an LEI as your secondary credential")
                                             |  LEI
                                 div
                                     button#signupNextButton.btn.btn-primary(disabled) Next
