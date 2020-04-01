@@ -55,16 +55,35 @@ block content
                     .col-md-4
                         h4 Supplier Info
                     .col-md-8
-                        .form-row
-                            .form-group.col
-                                label(for="createMemberID") Member ID
-                                input#createMemberID.form-control(type="text" name="member_identifier" required)
-                            .form-group.col
-                                label(for="createSupplierSince") Supplier Since
-                                input#infoSupplierSince.form-control(type="text" name="supplier_since" required)
-                            .form-group.col
-                                label(for="createSupplierRating") Supplier Rating
-                                input#infoSupplierRating.form-control(type="text" name="supplier_rating" required)
+                      .form-row
+                        .form-group.col-md-8
+                          label(for="infoMemberID") IFT Network Member ID
+                          input#infoMemberID.form-control(type="text" name="member_identifier"  required)
+                      .form-row
+                        .form-group.col
+                          label(for="infoSupplierID") Supplier ID
+                          input#infoSupplierID.form-control(type="text" name="supplier_identifier"  required)
+                        .form-group.col
+                          label(for="createSupplierSince") Supplier Since
+                          input#infoSupplierSince.form-control(type="text" name="supplier_since"  required)
+                        .form-group.col
+                          label(for="createSupplierRating") Supplier Rating
+                          input#infoSupplierRating.form-control(type="text" name="supplier_rating"  required)
+                      .form-row
+                        .form-group.col-md-8
+                          label(for="infoTYSID") Trust Your Supplier ID
+                          input#infoTYSID.form-control(type="text" name="tys_identifier")
+                      .form-row
+                        .form-group.col
+                          label(for="infoMemberSince") Member Since
+                          input#infoMemberSince.form-control(type="text" name="member_since")  
+                        .form-group.col
+                          label(for="infoTrustValue") Trust Value
+                          input#infoTrustValue.form-control(type="text" name="trust_value")
+                      .form-row
+                        .form-group.col
+                          label(for="infoLEI") LEI
+                          input#infoLEI.form-control(type="test" name="lei")
                 hr
                 .d-flex.flex-row-reverse
                     button#editUserButton.btn.btn-primary(type="submit" data-original-text="Update" data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Updating") Update

@@ -111,15 +111,20 @@ block extra
                                     .col-sm-6
                                         p.text-decoration-bolder You will need the following credentials:
                                         ul
-                                            li Trust Your Supplier Credential
-                                            li IFT Founder Credential
+                                            li An IFT Founder Credential
+                                            li And one of the following: 
+                                            ul
+                                                li Trust Your Supplier Credential 
+                                                li Digital LEI
                                     .col-sm-3
                                 div
                                     button#credsNextButton.btn.btn-primary Next
                                     a.vcSignupCancel.ml-2.text-decoration-underline(href="#") Cancel
 
                             .carousel-item.text-center
-                                h2 Please enter an email, password, and agent URL to create a IFT Network member account
+                                h2 Create an IFT Network member account
+                                    p.
+                                    h5 Please populate the following required fields
                                 .signup-form.text-left
                                     form#signupForm
                                         .form-group
@@ -138,6 +143,14 @@ block extra
                                         .form-group
                                             label.hidden-form-label(for="signupAgentName") Agent URL
                                             input#signupAgentName.form-control(type="text" name="agent_name" placeholder="Agent URL" required)
+                                        .form-group(title="Choose an option to designate your secondary credential type")
+                                            label.hidden-form-label(form="signupCredentialType") Choose Secondary Credential Type  
+                                            br                                        
+                                            input#signupCredentialType(type='radio' name='credential_type' value='TYS' required)
+                                            |  TYS
+                                            br
+                                            input#signupCredentialType(type='radio' name='credential_type' value='LEI' checked="checked" required)
+                                            |  LEI
                                 div
                                     button#signupNextButton.btn.btn-primary(disabled) Next
                                     a.vcSignupCancel.ml-2.text-decoration-underline(href="#") Cancel

@@ -1,0 +1,104 @@
+{
+    "name": "Verify LEI and IFT Founder",
+    "version": "1.0",
+    "nonce": "<generated>",
+    "requested_attributes": {
+      "address_line_1_ift": {
+        "name": "address_line_1",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "address_line_2_ift": {
+        "name": "address_line_2",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "company_name_ift": {
+        "name": "company_name",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "supplier_identifier_ift": {
+        "name": "supplier_identifier",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "country_ift": {
+        "name": "country",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "state_ift": {
+        "name": "state",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "zip_code_ift": {
+        "name": "zip_code",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "supplier_rating_ift": {
+        "name": "supplier_rating",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "supplier_since_ift": {
+        "name": "supplier_since",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "city_ift": {
+        "name": "city",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "tax_id_ift": {
+        "name": "tax_id",
+        "restrictions": [
+          {
+            "cred_def_id": "<ift_cred_def_id>"
+          }
+        ]
+      },
+      "LEI_lei": {
+        "name": "LEI",
+        "restrictions": [
+          {
+            "cred_def_id": "<lei_cred_def_id>"
+          }
+        ]
+      }
+    },
+    "requested_predicates": {}
+  }

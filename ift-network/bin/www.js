@@ -78,8 +78,10 @@ const ev = {
 	LOGIN_PROOF_PROVIDER: process.env.LOGIN_PROOF_PROVIDER,
 	LOGIN_PROOF_PATH: process.env.LOGIN_PROOF_PATH,
 	SIGNUP_PROOF_PROVIDER: process.env.SIGNUP_PROOF_PROVIDER,
-	SIGNUP_ACCOUNT_PROOF_PATH: process.env.SIGNUP_ACCOUNT_PROOF_PATH,
+	SIGNUP_ACCOUNT_PROOF_PATH_TYS: process.env.SIGNUP_ACCOUNT_PROOF_PATH_TYS,
+	SIGNUP_ACCOUNT_PROOF_PATH_LEI: process.env.SIGNUP_ACCOUNT_PROOF_PATH_LEI,
 	SIGNUP_TYS_ISSUER_AGENT: process.env.SIGNUP_TYS_ISSUER_AGENT,
+	SIGNUP_LEI_ISSUER_AGENT: process.env.SIGNUP_LEI_ISSUER_AGENT,
 	SIGNUP_IFT_FOUNDER_ISSUER_AGENT: process.env.SIGNUP_IFT_FOUNDER_ISSUER_AGENT,
 	SCHEMA_TEMPLATE_PATH: process.env.SCHEMA_TEMPLATE_PATH,
 	ACCEPT_INCOMING_CONNECTIONS: process.env.ACCEPT_INCOMING_CONNECTIONS === 'true',
@@ -279,14 +281,18 @@ async function start () {
 
 	let signup_helper;
 	if (ev.SIGNUP_PROOF_PROVIDER === 'account') {
-		if (!ev.SIGNUP_ACCOUNT_PROOF_PATH)
+		if (!ev.SIGNUP_ACCOUNT_PROOF_PATH_TYS || !ev.SIGNUP_ACCOUNT_PROOF_PATH_LEI)
 			throw new Error('SIGNUP_ACCOUNT_PROOF_PATH must be set in order to use `account` SIGNUP_PROOF_PROVIDER');
+		if (!ev.SIGNUP_IFT_FOUNDER_ISSUER_AGENT)
+			throw new Error('SIGNUP_IFT_FOUNDER_ISSUER_AGENT must be set in order to use `account` SIGNUP_PROOF_PROVIDER');
 		if (!ev.SIGNUP_TYS_ISSUER_AGENT)
 			throw new Error('SIGNUP_TYS_ISSUER_AGENT must be set in order to use `account` SIGNUP_PROOF_PROVIDER');
-		if (!ev.SIGNUP_IFT_FOUNDER_ISSUER_AGENT)
-			throw new Error('SIGNUP_IFT_FOUNDER_ISSUER_AGENT must be set in order to use `account` SIGNUP_PROOF_PROVIDER');	
+		if (!ev.SIGNUP_LEI_ISSUER_AGENT)
+			throw new Error('SIGNUP_LEI_ISSUER_AGENT must be set in order to use `account` SIGNUP_PROOF_PROVIDER');
+
+
 		logger.info(`${ev.SIGNUP_PROOF_PROVIDER} signup proof selected.  Proof request path: ${ev.SIGNUP_ACCOUNT_PROOF_PATH}`);
-		signup_helper = new Helpers.AccountSignupHelper(ev.SIGNUP_TYS_ISSUER_AGENT, ev.SIGNUP_IFT_FOUNDER_ISSUER_AGENT, ev.SIGNUP_ACCOUNT_PROOF_PATH, agent);
+		signup_helper = new Helpers.AccountSignupHelper(ev.SIGNUP_TYS_ISSUER_AGENT, ev.SIGNUP_LEI_ISSUER_AGENT, ev.SIGNUP_IFT_FOUNDER_ISSUER_AGENT, ev.SIGNUP_ACCOUNT_PROOF_PATH_TYS, ev.SIGNUP_ACCOUNT_PROOF_PATH_LEI, agent);
 		await signup_helper.cleanup();
 		await signup_helper.setup();
 

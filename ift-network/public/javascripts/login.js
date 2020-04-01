@@ -266,7 +266,7 @@ $(document).ready(() => {
 		vcSignupModal.modal('hide');
 	});
 
-	// Takes us from the "Creds you need" screen to the user signup form
+	// Takes us from the "Creds you need" screen to the user TYS signup form
 	$('#credsNextButton').on('click', () => {
 		$('#signupNextButton').removeAttr('disabled');
 		vcSignupCarousel.carousel(vcSignupCarouselSlides.ENTER_USER_INFO);
@@ -281,6 +281,8 @@ $(document).ready(() => {
 	const signup_confirm_password_label = $('label[for="signupConfirmPassword"]');
 	const signup_agent_name = $('#signupAgentName');
 	const signup_agent_name_label = $('label[for="signupAgentName"]');
+	const signup_credential_type = $('#signupCredentialType');
+	const signup_credential_type_label = $('label[for="signupCredentialType"]');
 
 	signup_user.focus(() => {
 		signup_user_label.css('visibility', 'visible');
@@ -310,6 +312,14 @@ $(document).ready(() => {
 		if (!signup_agent_name.val().trim())
 			signup_agent_name_label.css('visibility', 'hidden');
 	});
+	signup_credential_type.focus(() => {
+		signup_credential_type_label.css('visibility', 'visible');
+	});
+	signup_credential_type.focusout(() => {
+		if (!signup_credential_type.val().trim())
+			signup_credential_type_label.css('visibility', 'hidden');
+	});
+	
 
 	// Make sure new users are being given the password we think they are
 	const password_message = $('#signupPasswordMessage');
@@ -362,7 +372,8 @@ $(document).ready(() => {
 					password: password,
 					username: username,
 					agent_name: agent_name,
-					connection_method: 'in_band'
+					connection_method: 'in_band',
+					credential_type: formObject['credential_type']
 				})
 			});
 			console.log(`Signup response: ${JSON.stringify(response)}`);

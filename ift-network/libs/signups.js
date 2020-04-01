@@ -58,9 +58,10 @@ class SignupManager {
 	 * @param {string} agent_name The agent name associated with the user.
 	 * @param {string} password The new user's password.
 	 * @param {ConnectionMethod} connection_method The method for connecting to the user.
+	 * @param {string} credential_type The type of supporting credential the user says that they'll use (LEI or TYS).
 	 * @returns {string} A Signup instance ID to be used to check the status of the Signup later.
 	 */
-	create_signup (user, agent_name, password, connection_method) {
+	create_signup (user, agent_name, password, connection_method, credential_type) {
 		if (!user || typeof user !== 'string')
 			throw new TypeError('Invalid user was provided to signup manager');
 		if (!agent_name || typeof agent_name !== 'string')
@@ -69,10 +70,12 @@ class SignupManager {
 			throw new TypeError('Invalid password provided to signup manager');
 		if (!connection_method || typeof connection_method !== 'string')
 			throw new TypeError('Invalid connection method for issuing credentials');
-
+		if (!credential_type || typeof credential_type !== 'string')
+			throw new TypeError('Invalid credential type for verifying credentials');
+		
 		const signup_id = uuidv4();
 		logger.info(`Creating signup ${signup_id}`);
-		this.signups[signup_id] = new Signup(signup_id, agent_name, this.agent, user, password, this.user_records, this.card_renderer, this.connection_icon_provider, this.signup_helper, connection_method);
+		this.signups[signup_id] = new Signup(signup_id, agent_name, this.agent, user, password, this.user_records, this.card_renderer, this.connection_icon_provider, this.signup_helper, connection_method, credential_type);
 		this.signups[signup_id].start();
 		return signup_id;
 	}
@@ -195,8 +198,9 @@ class Signup {
 	 * @param {ImageProvider} connection_icon_provider Provides the image data for connection offers.
 	 * @param {SignupHelper} signup_helper Manages proof schemas and user record creation.
 	 * @param {ConnectionMethod} connection_method The method for establishing the connection to the user
+	 * @param {string} credential_type The type of supporting credential the user says that they'll use (LEI or TYS).
 	 */
-	constructor (id, agent_name, agent, user, password, user_records, card_renderer, connection_icon_provider, signup_helper, connection_method) {
+	constructor (id, agent_name, agent, user, password, user_records, card_renderer, connection_icon_provider, signup_helper, connection_method, credential_type) {
 		this.id = id;
 		this.agent = agent;
 		this.user = user;
@@ -212,6 +216,7 @@ class Signup {
 		this.verification = null;
 		this.credential = null;
 		this.connection_method = connection_method;
+		this.credential_type = credential_type;
 	}
 
 	/**
@@ -248,7 +253,16 @@ class Signup {
 			}
 
 			logger.info(`Creating signup proof schema for schema ID: ${schema_id}`);
-			const proof_request = await this.signup_helper.getProofSchema();
+			let proof_request = null;
+			if (this.credential_type === "LEI") {
+				proof_request = await this.signup_helper.getProofSchema({uselei: true});
+			} else if (this.credential_type === "TYS") {
+				proof_request = await this.signup_helper.getProofSchema();
+			} else {
+				const err = new Error('Unable to determine proof schema to lookup');
+				err.code = SIGNUP_ERRORS.SCHEMA_LOOKUP_FAILED;
+				throw err;
+			}
 
 			const account_proof_schema = await this.agent.createProofSchema(proof_request.name, proof_request.version,
 				proof_request.requested_attributes, proof_request.requested_predicates);

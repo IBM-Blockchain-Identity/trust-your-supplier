@@ -274,6 +274,12 @@ function populate_user_info () {
 		},
 		'member_since': {
 			element: '#infoMemberSince'
+		},
+		'credential_type': {
+			element: '#infoCredentialType'
+		},
+		'lei' : {
+			element: '#infoLEI'
 		}
 	};
 

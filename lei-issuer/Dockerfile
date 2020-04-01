@@ -27,4 +27,4 @@ ENV SIGNUP_PROOF_PROVIDER=none
 ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/legal_entity_credential.json
 ENV ACCEPT_INCOMING_CONNECTIONS=true
 
-CMD npm start
+CMD npm run start
