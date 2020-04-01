@@ -149,7 +149,6 @@ services:
     image: ift-network
     ports:
       - "8095:3000"
-      - "9229:9229"
     volumes:
       - "./ift-network/public:/opt/app/public"
       - "./ift-network/views:/opt/app/views"
