@@ -158,20 +158,46 @@ Mention:
 
 Make sure the Acme agent is currently selected in the Chrome Extension.  Assumes that the GLEIF interaction has already happened.
 
+Mention:
+
+* Acme is coming to Bloomberg, an LEI Issuer, to acquire an LEI for itself.
+* Similar to the GLEIF flow, the demo assumes that Acme has already applied to Bloomberg to acquire their LEI and has provided all necessary documentation, specified a username and password for their new Bloomberg account and provided the address of their agent endpoint.
+* Similar to the GLEIF flow, when Acme goes to Bloomberg to acquire their digital LEI, a connection will need to be established between the Bloomberg agent and the Acme agent if one doesn't already exist.  After that step, Bloomberg will send a credential offer to Acme containing their LEI information that Acme must accept to store the credential in their wallet.
+* Similar to GLEIF, the credential issued by Bloomberg can also be consumed by Bloomberg during passwordless authentication.
+
+
 ### Watson Organic Farms
 
 Make sure the Acme agent is currently selected in the Chrome Extension.  Assumes GLEIF and Bloomberg interactions have already taken place and that Acme has a digitl LEI in their wallet.
 
 Mention:
 
+* Acme is coming to the Watson Organic Farms (WOF) site as part of the process to become a supplier to WOF.
 * With Watson Organic Farms (WOF), the first interaction is that Acme needs to create an account.
 	* Note that Acme must supply userid, password and Agent endpoint address (URL) now wherease in the GLEIF and Bloomberg interactions this took place during the vetting process.
-* As part of signup, Acme will be asked to provide 
+* As part of signup, Acme will be asked to provide the LEI attribute from a digital LEI credential.
+* After establishing that a connection is in place, WOF will send Acme a proof request asking this attribute.  Upon receiving the proof request, Acme's agent will look inside the wallet for credentials and their attributes that satisfy the proof.  The Acme user will be prompted whether to send this information to WOF (since the data could be sensative).
+* When WOF agent receives the response to the proof, it will verify, mathematically and cryptographically, whether the supplied data satisfies the proof request and that the data contained in the response hasn't been altered en route.
+* After verification happens, the WOF webapp will be able to examine the values provided in the response to make further decisions.
+* After verification happens, WOF will issue a supplier credential to Acme that can be used for passwordless authentication upon login.
 
 ### TYS
 
 Make sure the Acme agent is currently selected in the Chrome Extension.  Assumes GLEIF and Bloomberg interactions have already taken place and that Acme has a digital LEI in their wallet.
 
+Mention:
+
+* Acme is coming to TYS to become a member of the Trust Your Supplier blockchain network.  Such a membership could be leveraged by Acme to  establish new relationships with buyers who are part of the network.
+* Similar to WOF, TYS will ask for a digital LEI in order to create the account for Acme on the TYS system.
+* The credential that is eventually issued to Acme (along with its account) contains a `trust_value` attribute with a numberical value.  A verifier could potentially write a proof request where it asks for a TYS credential where the `trust_value` is above a certain value and make decisions based on this and other factors.  For example, perhaps the verifier has a different vetting process if the value is below a certain threshold.
+
 ### IFT Network
 
 Make sure the Acme agent is currently selected in the Chrome Extension.  Assumes GLEIF, Bloomberg and WOF interactions have already taken place (and possibly TYS also) and that Acme has a WOF supplier credential as well as a digital LEI and/or TYS credential in the Acme wallet.
+
+Mention:
+
+* Acme is coming to IFT Network to participate and share its data to the network for the work it does with Watson Organic Farms.
+* During signup Acme is asked to profide a supplier credential from an IFT Founder (WOF in this case) and values from either a TYS credential or a digital LEI.
+* Notice that unlike other proof requests, IFT Network is asking for data from two different credentials.  This shows the flexibility of a proof request.  It can request any number of attributes from any number of credentials filtered by credential schemas by name, version and issuer.
+* After receiving the response from Acme, the IFT Network can make decisions based on the data that Acme supplied.
