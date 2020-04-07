@@ -19,14 +19,14 @@ we've provided.
 
 ### Setting up
 
-1. Visit your agent account management page and provision four new agents, `leiissuer`, 
-`gleif`, `iftfounder`, and `acme`.  Make sure the box marking the new agents as issuers is checked.
+1. Visit your agent account management page and provision six new agents, `leiissuer`, 
+`gleif`, `iftfounder`, `tys`, `iftnetwork` and `acme`.  Make sure the box marking the new agents as issuers is checked for each.
 
-2. Find your account url and record the passwords for the three agents that you created.  You can find this information
+2. Find your account url and record the passwords for all of the agents that you created.  You can find this information
 by visiting your account dashboard, clicking on each agent, clicking the `Add Device` on the `General` page for the agent,
 and clicking on `Manual Entry` in the `Register Device` popup panel.
 
-3. Make sure all of your agents are capable of issuing credentials.  You can determine this via one of two methods:
+3. Double check that all of your agents are capable of issuing credentials.  You can determine this via one of two methods:
     1. Open the account dashboard, click on the agent, and check the `Agent Role` under the `General` page.
         ```
         Agent Name: leiissuer
@@ -81,7 +81,13 @@ docker-compose build
 
     IFT_FOUNDER_AGENT_NAME=IFTFounder
     IFT_FOUNDER_AGENT_PASSWORD=****
+    
+    TYS_AGENT_NAME=tys
+    TYS_AGENT_PASSWORD=****
 
+    IFT_NETWORK_AGENT_NAME=iftnetwork
+    IFT_NETWORK_AGENT_PASSWORD=****
+    
     COUCHDB_USER_NAME=admin
     COUCHDB_USER_PASSWORD=****
     ```
@@ -98,12 +104,16 @@ docker-compose build
     - [GLEIF](http://localhost:8091)
     - [ACME](http://localhost:8092)
     - [IFT_FOUNDER](http://localhost:8093)
+    - [TYS](http://localhost:8094)
+    - [IFT_NETWORK](http://localhost:8095)
     
 4. Read the setup documentation for each app.
     - [LEI Issuer](lei-issuer/README.md#development)
     - [GLEIF](gleif/README.md#development)
     - [ACME](acme/README.md#development)
     - [IFT_FOUNDER](ift-founder/README.md#development)
+    - [TYS](tys/README.md#development)
+    - [IFT_NETWORK](ift-network/README.md#development)
 
 4. Browse to the [CouchDB UI](http://localhost:5984/_utils) to see what the apps are writing to the database.
 
