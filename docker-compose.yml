@@ -172,3 +172,17 @@ services:
       - ADMIN_API_PASSWORD
     links:
         - couchdb
+
+  test:
+    container_name: testtys
+    image: testtys
+    build:
+      context: test_holder
+    ports:
+      - "9229:9229"
+    environment:
+      - GLEIF_AGENT_NAME
+      - GLEIF_AGENT_PASSWORD
+      - LEI_ISSUER_AGENT_NAME
+      - LEI_ISSUER_AGENT_PASSWORD
+    command: node ${CA_TEST_NAME}.js
