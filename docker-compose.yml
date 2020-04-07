@@ -178,11 +178,18 @@ services:
     image: testtys
     build:
       context: test_holder
-    ports:
-      - "9229:9229"
     environment:
+      - ACCOUNT_URL
       - GLEIF_AGENT_NAME
       - GLEIF_AGENT_PASSWORD
       - LEI_ISSUER_AGENT_NAME
       - LEI_ISSUER_AGENT_PASSWORD
+      - TYS_AGENT_NAME
+      - TYS_AGENT_PASSWORD
+      - ACME_AGENT_NAME
+      - ACME_AGENT_PASSWORD
+      - IFT_FOUNDER_AGENT_NAME
+      - IFT_FOUNDER_AGENT_PASSWORD
+      - IFT_NETWORK_AGENT_NAME
+      - IFT_NETWORK_AGENT_PASSWORD
     command: node ${CA_TEST_NAME}.js

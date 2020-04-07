@@ -18,6 +18,7 @@ const Agent = require('openssi-websdk').Agent;
 
 // Logging setup
 const Logger = require('./libs/logger.js').Logger;
+Logger.setLogLevel('info');
 const logger = Logger.makeLogger(Logger.logPrefix(__filename));
 
 
@@ -35,49 +36,143 @@ for (const index in required) {
 */
 
 // Pull required configuration parameters from environment variables
+
+const ev = {
+	ACCOUNT_URL: process.env.ACCOUNT_URL,
+	LEI_ISSUER_AGENT_NAME: process.env.LEI_ISSUER_AGENT_NAME,
+	LEI_ISSUER_AGENT_PASSWORD: process.env.LEI_ISSUER_AGENT_PASSWORD,
+	GLEIF_AGENT_NAME: process.env.GLEIF_AGENT_NAME,
+	GLEIF_AGENT_PASSWORD: process.env.GLEIF_AGENT_PASSWORD,
+	ACME_AGENT_NAME: process.env.ACME_AGENT_NAME,
+    ACME_AGENT_PASSWORD: process.env.ACME_AGENT_PASSWORD,
+    TYS_AGENT_NAME: process.env.TYS_AGENT_NAME,
+    TYS_AGENT_PASSWORD: process.env.TYS_AGENT_PASSWORD,
+    IFT_FOUNDER_AGENT_NAME: process.env.IFT_FOUNDER_AGENT_NAME,
+    IFT_FOUNDER_AGENT_PASSWORD: process.env.IFT_FOUNDER_AGENT_PASSWORD,
+    IFT_NETWORK_AGENT_NAME: process.env.IFT_NETWORK_AGENT_NAME,
+    IFT_NETWORK_AGENT_PASSWORD: process.env.IFT_NETWORK_AGENT_PASSWORD
+};
+
+/*
 const ev = {
 	ACCOUNT_URL: "https://07ca644c06e0d5d2f41f659bf96567ae13e069ba4f134bf76722fd4a.staging-cloud-agents.us-east.containers.appdomain.cloud",
 	LEI_ISSUER_AGENT_NAME: "bloomberg",
 	LEI_ISSUER_AGENT_PASSWORD: "Cg5vSaGZlDmYNCxzYfa9",
 	GLEIF_AGENT_NAME: "gleif1",
 	GLEIF_AGENT_PASSWORD: "RDjsh2hT1MB9PPv0aF3X",
+	ACME_AGENT_NAME: "acme",
+    ACME_AGENT_PASSWORD: "w0Ss2qun8ZP6mM5IbXbh",
+    TYS_AGENT_NAME: "tys",
+    TYS_AGENT_PASSWORD: "14vRU4XKcIJuVqeWcwF3",
+    IFT_FOUNDER_AGENT_NAME: "WatsonOrganicFarms",
+    IFT_FOUNDER_AGENT_PASSWORD: "WH6DUcbyYKkXsdpoJWbv",
+    IFT_NETWORK_AGENT_NAME: "iftnetwork",
+    IFT_NETWORK_AGENT_PASSWORD: "956CEQiS1ehQO8jw4ULz"
 };
-/*
+
 for (const key in ev) {
 	if (key.toLowerCase().indexOf('password') >= 0) continue;
-	logger.debug(`${key}: ${ev[key]}`);
+	console.debug(`${key}: ${ev[key]}`);
 }
 */
 
 
 (async () => {
 	try {
+		console.log("starting cleanup");
+		// initialize agents
 		const loggingLevel = ev.AGENT_LOG_LEVEL ? ev.AGENT_LOG_LEVEL : 'info';
-		logger.info(`ev: ${JSON.stringify(ev)}`);
+		console.info(`ev: ${JSON.stringify(ev)}`);
 		const gleifAgent = new Agent(ev.ACCOUNT_URL, ev.GLEIF_AGENT_NAME, ev.GLEIF_AGENT_PASSWORD, "GLEIF");
 		gleifAgent.setLoggingLevel(loggingLevel);
 		const leiIssuerAgent = new Agent(ev.ACCOUNT_URL, ev.LEI_ISSUER_AGENT_NAME, ev.LEI_ISSUER_AGENT_PASSWORD, "LEIIssuer");
 		leiIssuerAgent.setLoggingLevel(loggingLevel);
-		const leiIssuerInfo = await leiIssuerAgent.getIdentity();
-		logger.info(`agent info: ${JSON.stringify(leiIssuerInfo)}`);
-		const leiIssuerName = leiIssuerInfo.name;
+		const iftFounderAgent = new Agent(ev.ACCOUNT_URL, ev.IFT_FOUNDER_AGENT_NAME, ev.IFT_FOUNDER_AGENT_PASSWORD, "IFTFounder");
+		iftFounderAgent.setLoggingLevel(loggingLevel);
+		const tysAgent = new Agent(ev.ACCOUNT_URL, ev.TYS_AGENT_NAME, ev.TYS_AGENT_PASSWORD, "TYS");
+		tysAgent.setLoggingLevel(loggingLevel);
+		const iftNetworkAgent = new Agent(ev.ACCOUNT_URL, ev.IFT_NETWORK_AGENT_NAME, ev.IFT_NETWORK_AGENT_PASSWORD, "IFTNetwork");
+		iftNetworkAgent.setLoggingLevel(loggingLevel);
+		const acmeAgent = new Agent(ev.ACCOUNT_URL, ev.ACME_AGENT_NAME, ev.ACME_AGENT_PASSWORD, "Acme");
+		acmeAgent.setLoggingLevel(loggingLevel);
 
-		logger.info(`*************** DELETING ${leiIssuerName} CONNECTIONS from ${ev.GLEIF_AGENT_NAME}***************`);
+		await deleteAllCredentials(gleifAgent);
+		await deleteConnections(gleifAgent, leiIssuerAgent);
+		await deleteAllCredentials(leiIssuerAgent);
+		await deleteConnections(leiIssuerAgent, acmeAgent);
+		await deleteAllCredentials(iftFounderAgent);
+		await deleteConnections(iftFounderAgent, acmeAgent);
+		await deleteAllCredentials(tysAgent);
+		await deleteConnections(tysAgent, acmeAgent);
+		await deleteAllCredentials(iftNetworkAgent);
+		await deleteConnections(iftNetworkAgent, acmeAgent);
+		await deleteAllCredentials(acmeAgent);
+		await deleteAllConnections(acmeAgent);
+
+		console.log('cleaned up successfully');
+	} catch (error){
+		console.error(`Encountered error: ${error}`);
+		console.error(`stack: ${error.stack}`);
+	}
+
+	async function deleteConnections(fromAgent, toAgent) {
+		if (!fromAgent || !toAgent) {
+			throw new Error("need to provide fromAgent and toAgent to deleteConnections");
+		}
+		const toName = (await toAgent.getIdentity()).name;
+		const fromName = (await fromAgent.getIdentity()).name;
+		console.info(`*************** DELETING ${toName} CONNECTIONS from ${fromName}***************`);
 		let search = {};
-		search['remote.name'] = leiIssuerName;
-		const connections = await gleifAgent.getConnections(search);
-		logger.info(`***************${connections.length} CONNECTIONS TO DELETE***************`);
+		search['remote.name'] = toName;
+		const connections = await fromAgent.getConnections(search);
+		console.info(`***************${connections ? connections.length : 0} CONNECTIONS TO DELETE***************`);
 		for (const index in connections) {
 			const conn = connections[index];
-			logger.debug(`***************DELETING CONNECTION ${conn.id} to ${conn.remote ? conn.remote.name : 'nobody'}***************`);
+			console.debug(`***************DELETING CONNECTION ${conn.id} to ${conn.remote ? conn.remote.name : 'nobody'}***************`);
 			try {
-				await agent.deleteConnection(conn.id);
+				await fromAgent.deleteConnection(conn.id);
 			} catch (error) {
-				logger.error(`Error when deleting connection ${conn.id}: ${error}`);
+				console.error(`Error when deleting connection ${conn.id}: ${error}`);
 			}
 		}
-	} catch (error){
-		logger.error(`Encountered error: ${error}`);
+	}
+
+	async function deleteAllConnections(fromAgent) {
+		if (!fromAgent) {
+			throw new Error("need to provide fromAgent to deleteAllConnections");
+		}
+		const fromName = (await fromAgent.getIdentity()).name;
+		console.info(`*************** DELETING ALL CONNECTIONS from ${fromName}***************`);
+		const connections = await fromAgent.getConnections();
+		console.info(`***************${connections ? connections.length : 0} Connections TO DELETE***************`);
+		for (const index in connections) {
+			const conn = connections[index];
+			console.debug(`***************DELETING CONNECTION ${conn.id} ***************`);
+			try {
+				await fromAgent.deleteConnection(conn.id);
+			} catch (error) {
+				console.error(`Error when deleting connection ${conn.id}: ${error}`);
+			}
+		}
+	}
+
+	async function deleteAllCredentials(fromAgent) {
+		if (!fromAgent) {
+			throw new Error("need to provide fromAgent to deleteAllCredentials");
+		}
+		const fromName = (await fromAgent.getIdentity()).name;
+		console.info(`*************** DELETING ALL CREDENTIALS from ${fromName}***************`);
+		const credentials = await fromAgent.getCredentials();
+		console.info(`***************${credentials ? credentials.length : 0} CREDENTIALS TO DELETE***************`);
+		for (const index in credentials) {
+			const cred = credentials[index];
+			console.debug(`***************DELETING CREDENTIAL ${cred.id} ***************`);
+			try {
+				await fromAgent.deleteCredential(cred.id);
+			} catch (error) {
+				console.error(`Error when deleting credential ${cred.id}: ${error}`);
+			}
+		}
 	}
 /*
 	if (ev.CREDENTIALS_CLEANUP) {
