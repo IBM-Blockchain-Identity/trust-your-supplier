@@ -121,11 +121,11 @@ for (const key in ev) {
 		}
 		const toName = (await toAgent.getIdentity()).name;
 		const fromName = (await fromAgent.getIdentity()).name;
-		console.info(`*************** DELETING ${toName} CONNECTIONS from ${fromName}***************`);
+		console.info(`*************** DELETING ${toName} CONNECTIONS from ${fromName} ***************`);
 		let search = {};
 		search['remote.name'] = toName;
 		const connections = await fromAgent.getConnections(search);
-		console.info(`***************${connections ? connections.length : 0} CONNECTIONS TO DELETE***************`);
+		console.info(`*************** ${connections ? connections.length : 0} CONNECTIONS TO DELETE ***************`);
 		for (const index in connections) {
 			const conn = connections[index];
 			console.debug(`***************DELETING CONNECTION ${conn.id} to ${conn.remote ? conn.remote.name : 'nobody'}***************`);
@@ -142,12 +142,12 @@ for (const key in ev) {
 			throw new Error("need to provide fromAgent to deleteAllConnections");
 		}
 		const fromName = (await fromAgent.getIdentity()).name;
-		console.info(`*************** DELETING ALL CONNECTIONS from ${fromName}***************`);
+		console.info(`*************** DELETING ALL CONNECTIONS from ${fromName} ***************`);
 		const connections = await fromAgent.getConnections();
-		console.info(`***************${connections ? connections.length : 0} Connections TO DELETE***************`);
+		console.info(`*************** ${connections ? connections.length : 0} Connections TO DELETE ***************`);
 		for (const index in connections) {
 			const conn = connections[index];
-			console.debug(`***************DELETING CONNECTION ${conn.id} ***************`);
+			console.debug(`*************** DELETING CONNECTION ${conn.id} ***************`);
 			try {
 				await fromAgent.deleteConnection(conn.id);
 			} catch (error) {
@@ -161,12 +161,12 @@ for (const key in ev) {
 			throw new Error("need to provide fromAgent to deleteAllCredentials");
 		}
 		const fromName = (await fromAgent.getIdentity()).name;
-		console.info(`*************** DELETING ALL CREDENTIALS from ${fromName}***************`);
+		console.info(`*************** DELETING ALL CREDENTIALS from ${fromName} ***************`);
 		const credentials = await fromAgent.getCredentials();
-		console.info(`***************${credentials ? credentials.length : 0} CREDENTIALS TO DELETE***************`);
+		console.info(`*************** ${credentials ? credentials.length : 0} CREDENTIALS TO DELETE ***************`);
 		for (const index in credentials) {
 			const cred = credentials[index];
-			console.debug(`***************DELETING CREDENTIAL ${cred.id} ***************`);
+			console.debug(`*************** DELETING CREDENTIAL ${cred.id} ***************`);
 			try {
 				await fromAgent.deleteCredential(cred.id);
 			} catch (error) {
