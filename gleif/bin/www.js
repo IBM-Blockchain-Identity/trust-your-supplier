@@ -84,7 +84,8 @@ const ev = {
 	SCHEMA_TEMPLATE_PATH: process.env.SCHEMA_TEMPLATE_PATH,
 	ACCEPT_INCOMING_CONNECTIONS: process.env.ACCEPT_INCOMING_CONNECTIONS === 'true',
 	ADMIN_API_USERNAME: process.env.ADMIN_API_USERNAME,
-	ADMIN_API_PASSWORD: process.env.ADMIN_API_PASSWORD
+	ADMIN_API_PASSWORD: process.env.ADMIN_API_PASSWORD,
+	TRUSTED_CONNECTIONS: process.env.TRUSTED_CONNECTIONS
 };
 
 for (const key in ev) {
@@ -296,9 +297,10 @@ async function start () {
 		throw new Error(`Invalid value for SIGNUP_PROOF_PROVIDER: ${ev.SIGNUP_PROOF_PROVIDER}`);
 	}
 
-	if (ev.ACCEPT_INCOMING_CONNECTIONS) {
+//	if (ev.ACCEPT_INCOMING_CONNECTIONS) {
+	if (ev.TRUSTED_CONNECTIONS) {
 		logger.info(`Listening for and accepting connection offers to my agent, ${agent.name}`);
-		const responder = new Helpers.ConnectionResponder(agent);
+		const responder = new Helpers.ConnectionResponder(agent, ev.TRUSTED_CONNECTIONS);
 		responder.start();
 	} else {
 		logger.info(`Not listening for connection offers to my agent, ${agent.name}`);

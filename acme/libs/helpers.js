@@ -459,18 +459,21 @@ class AccountSignupHelper {
  * one of these so that it can establish a connection to look up their credential definitions and build a proof schema.
  */
 class ConnectionResponder {
-	constructor (agent, interval) {
+	constructor (agent, trusted_connections, interval) {
 		if (!agent || typeof agent.getConnections !== 'function')
 			throw new TypeError('Invalid agent for ConnectionResponder');
 		if (interval !== undefined && typeof interval !== 'number' || interval < 0)
 			throw new TypeError('Invalid polling interval for ConnectionResponder');
 		this.agent = agent;
 		this.stopped = true;
+		this.trustedConnections = trusted_connections !== undefined ? trusted_connections : null;
 		this.interval = interval !== undefined ? interval : 3000;
 	}
 
 	async start () {
 		this.stopped = false;
+		logger.info(`Trusted connections for ${this.agent.name}:  ${this.trustedConnections}`);
+		const connectionList = this.trustedConnections.split(",");
 
 		async.until(
 			() => { return this.stopped; },
@@ -485,9 +488,15 @@ class ConnectionResponder {
 					if (offers.length > 0) {
 						const offer = offers[0];
 						try {
-							logger.info(`Accepting connection offer ${offer.id} from  ${offer.remote.name}`);
-							const r = await this.agent.acceptConnection(offer.id);
-							logger.info(`Accepted connection offer ${r.id} from ${r.remote.name}`);
+							// We automatically accept connections if the agent name matches one in our 
+							// list, but it must be from our local container to avoid name collisions
+							// with agents from foreign containers.
+							var trusted = connectionList.includes(offer.remote.name); 
+							if (trusted && (offer.remote.container_name == this.agent.url)) {
+								logger.info(`Accepting connection offer ${offer.id} from  ${offer.remote.name}`);
+								const r = await this.agent.acceptConnection(offer.id);
+								logger.info(`Accepted connection offer ${r.id} from ${r.remote.name}`);
+							}
 						} catch (error) {
 							logger.error(`Couldn't accept connection offer ${offer.id}. Error: ${error}`);
 							logger.info(`Deleting bad connection offer ${offer.id}`);
