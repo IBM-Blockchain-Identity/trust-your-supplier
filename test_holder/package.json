@@ -2,17 +2,20 @@
   "name": "test-holder",
   "author": "Bryce Curtis <bcurtis@us.ibm.com>",
   "contributors": [
-    "Dale Avery <davery@us.ibm.com"
+    "Dale Avery <davery@us.ibm.com>",
+    "Aaron Reed <davery@us.ibm.com"
   ],
   "version": "0.0.1",
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
     "start": "node holder.js",
+    "cleanup": "node cleanup.js",
+    "remote-debug": "node --inspect=0.0.0.0:9229 --nolazy ./cleanup.js",
     "lint": "./node_modules/.bin/eslint . || true"
   },
   "dependencies": {
-    "openssi-websdk": "0.0.4-alpha",
+    "openssi-websdk": "0.0.9-alpha",
     "winston": "^3.0.0"
   },
   "devDependencies": {

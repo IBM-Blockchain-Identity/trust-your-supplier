@@ -11,4 +11,4 @@ RUN npm install --production
 # Install our app code
 COPY ./ /opt/app/
 
-CMD npm start
+CMD npm run remote-debug
