@@ -1,6 +1,6 @@
 version: "3"
 services:
-  couchdb:
+  tys-couchdb:
     image: couchdb
     ports:
       - "5984:5984"
@@ -14,12 +14,12 @@ services:
     build: ./lei-issuer
     image: lei-issuer
     ports:
-      - "8090:3000"
+      - "8190:3000"
     volumes:
       - "./lei-issuer/public:/opt/app/public"
       - "./lei-issuer/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@tys-couchdb:5984
       - DB_USERS=lei_issuer_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -34,18 +34,18 @@ services:
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
     links:
-      - couchdb
+      - tys-couchdb
 
   gleif:
     build: ./gleif
     image: gleif
     ports:
-      - "8091:3000"
+      - "8191:3000"
     volumes:
       - "./gleif/public:/opt/app/public"
       - "./gleif/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@tys-couchdb:5984
       - DB_USERS=gleif_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -60,18 +60,18 @@ services:
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
     links:
-      - couchdb
+      - tys-couchdb
 
   acme:
     build: ./acme
     image: acme
     ports:
-      - "8092:3000"
+      - "8192:3000"
     volumes:
       - "./acme/public:/opt/app/public"
       - "./acme/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@tys-couchdb:5984
       - DB_USERS=acme_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -86,18 +86,18 @@ services:
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
     links:
-      - couchdb
+      - tys-couchdb
 
   ift-founder:
     build: ./ift-founder
     image: ift-founder
     ports:
-      - "8093:3000"
+      - "8193:3000"
     volumes:
       - "./ift-founder/public:/opt/app/public"
       - "./ift-founder/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@tys-couchdb:5984
       - DB_USERS=ift-founder_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -114,18 +114,18 @@ services:
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
     links:
-      - couchdb
+      - tys-couchdb
 
   tys:
     build: ./tys
     image: tys
     ports:
-      - "8094:3000"  
+      - "8194:3000"
     volumes:
       - "./tys/public:/opt/app/public"
       - "./tys/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@tys-couchdb:5984
       - DB_USERS=tys_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -142,18 +142,18 @@ services:
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
     links:
-        - couchdb
+        - tys-couchdb
 
   ift-network:
     build: ./ift-network
     image: ift-network
     ports:
-      - "8095:3000"
+      - "8195:3000"
     volumes:
       - "./ift-network/public:/opt/app/public"
       - "./ift-network/views:/opt/app/views"
     environment:
-      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@couchdb:5984
+      - DB_CONNECTION_STRING=http://${COUCHDB_USER_NAME}:${COUCHDB_USER_PASSWORD}@tys-couchdb:5984
       - DB_USERS=ift-network_db
       - LOG_LEVEL=debug
       - ACCOUNT_URL
@@ -171,25 +171,4 @@ services:
       - ADMIN_API_USERNAME
       - ADMIN_API_PASSWORD
     links:
-        - couchdb
-
-  test:
-    container_name: testtys
-    image: testtys
-    build:
-      context: test_holder
-    environment:
-      - ACCOUNT_URL
-      - GLEIF_AGENT_NAME
-      - GLEIF_AGENT_PASSWORD
-      - LEI_ISSUER_AGENT_NAME
-      - LEI_ISSUER_AGENT_PASSWORD
-      - TYS_AGENT_NAME
-      - TYS_AGENT_PASSWORD
-      - ACME_AGENT_NAME
-      - ACME_AGENT_PASSWORD
-      - IFT_FOUNDER_AGENT_NAME
-      - IFT_FOUNDER_AGENT_PASSWORD
-      - IFT_NETWORK_AGENT_NAME
-      - IFT_NETWORK_AGENT_PASSWORD
-    command: node ${CA_TEST_NAME}.js
+        - tys-couchdb
