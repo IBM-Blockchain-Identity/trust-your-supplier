@@ -15,6 +15,7 @@
  */
 
 const Agent = require('openssi-websdk').Agent;
+const fetch = require('node-fetch');
 
 // Logging setup
 const Logger = require('./libs/logger.js').Logger;
@@ -50,7 +51,8 @@ const ev = {
     IFT_FOUNDER_AGENT_NAME: process.env.IFT_FOUNDER_AGENT_NAME,
     IFT_FOUNDER_AGENT_PASSWORD: process.env.IFT_FOUNDER_AGENT_PASSWORD,
     IFT_NETWORK_AGENT_NAME: process.env.IFT_NETWORK_AGENT_NAME,
-    IFT_NETWORK_AGENT_PASSWORD: process.env.IFT_NETWORK_AGENT_PASSWORD
+	IFT_NETWORK_AGENT_PASSWORD: process.env.IFT_NETWORK_AGENT_PASSWORD,
+	CA_TEST_CLEANUP_ACCOUNTS: process.env.CA_TEST_CLEANUP_ACCOUNTS
 };
 
 /*
@@ -67,19 +69,38 @@ const ev = {
     IFT_FOUNDER_AGENT_NAME: "WatsonOrganicFarms",
     IFT_FOUNDER_AGENT_PASSWORD: "WH6DUcbyYKkXsdpoJWbv",
     IFT_NETWORK_AGENT_NAME: "iftnetwork",
-    IFT_NETWORK_AGENT_PASSWORD: "956CEQiS1ehQO8jw4ULz"
+	IFT_NETWORK_AGENT_PASSWORD: "956CEQiS1ehQO8jw4ULz",
+	CA_TEST_CLEANUP_ACCOUNTS: "acme@example.com"
 };
+*/
 
 for (const key in ev) {
 	if (key.toLowerCase().indexOf('password') >= 0) continue;
 	console.debug(`${key}: ${ev[key]}`);
 }
-*/
 
 
 (async () => {
 	try {
 		console.log("starting cleanup");
+		const accountsToCleanup = ev.CA_TEST_CLEANUP_ACCOUNTS;
+		let accountsToCleanupArray = null;
+		if (accountsToCleanup && accountsToCleanup.length > 0) {
+			accountsToCleanupArray = accountsToCleanup.split(',');
+		}
+		if (!accountsToCleanupArray || !Array.isArray(accountsToCleanupArray) || accountsToCleanupArray.length === 0) {
+			// no accounts to delete
+			console.info('Not deleting any accounts, no accounts specified')
+		} else {
+			// accounts to delete, make sure we have the information we need
+			if ((!ev.IFT_FOUNDER_URL || ev.IFT_FOUNDER_URL.length === 0) ||
+				(!ev.TYS_URL || ev.TYS_URL.length === 0) ||
+				(!ev.IFT_NETWORK_URL || ev.IFT_NETWORK_URL.length === 0)) {
+
+				console.error('cannot delete accounts if ift-founder, tys and/or ift-network urls not specified');
+			}
+		}
+
 		// initialize agents
 		const loggingLevel = ev.AGENT_LOG_LEVEL ? ev.AGENT_LOG_LEVEL : 'info';
 		console.info(`ev: ${JSON.stringify(ev)}`);
@@ -108,6 +129,7 @@ for (const key in ev) {
 		await deleteConnections(iftNetworkAgent, acmeAgent);
 		await deleteAllCredentials(acmeAgent);
 		await deleteAllConnections(acmeAgent);
+		await deleteAccounts(accountsToCleanupArray);
 
 		console.log('cleaned up successfully');
 	} catch (error){
@@ -171,6 +193,28 @@ for (const key in ev) {
 				await fromAgent.deleteCredential(cred.id);
 			} catch (error) {
 				console.error(`Error when deleting credential ${cred.id}: ${error}`);
+			}
+		}
+	}
+
+	// delete the given array of accounts (specified by username) from ift-founder
+	//  tys and ift-network
+	async function deleteAccounts(usernameArray) {
+		if (!usernameArray) {
+			return;
+		}
+
+		console.info(`*************** ${usernameArray.length} USERNAMES TO DELETE ***************`);
+		for (let i=0; i < usernameArray.length; i++) {
+			const username = usernameArray[i];
+			try {
+				console.info(`*************** DELETING USERNAME: ${username} ***************`);
+				await fetch(`http://tys:3000/api/users/${username}`, {'method': 'DELETE'});
+				await fetch(`http://ift-founder:3000/api/users/${username}`, {'method': 'DELETE'});
+				await fetch(`http://ift-network:3000/api/users/${username}`, {'method': 'DELETE'});
+			} catch (error) {
+				console.error(`Error while deleting username: ${username}, exiting deleteAccounts`);
+				throw error;
 			}
 		}
 	}
