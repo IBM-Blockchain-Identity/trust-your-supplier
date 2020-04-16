@@ -119,6 +119,10 @@ exports.createRouter = function (users_instance, ev, middleware) {
 					user_record.zip_code = leiInfo.Entity.LegalAddress.PostalCode.$;
 					user_record.country = leiInfo.Entity.LegalAddress.Country.$;
 
+					if (leiInfo.Entity.LegalAddress.AdditionalAddressLine && leiInfo.Entity.LegalAddress.AdditionalAddressLine.length > 0) {
+						user_record.address_line_2 = leiInfo.Entity.LegalAddress.AdditionalAddressLine[0].$
+					}
+
 					return httpResponse.json(user_record);
 				}
 				return httpResponse.status(500).json({message: "lei search returned no information"});
