@@ -266,6 +266,23 @@ $(document).ready(async () => {
 		loader.html(loader.data('loading-text'));
 		loader.attr('disabled', 'disabled');
 
+		// assumes user_data.attributes.LEI
+		try {
+			const leiInfo = await $.ajax({
+				url: `/leinumber/${user_record.LEI}`,
+				method: 'GET',
+				contentType: 'application/json'
+			});
+			// copy any data from the leiInfo into the user_data, replacing
+			//  the values for any common property since that data is the
+			//  source of truth
+			for (const attr_name in leiInfo) {
+				user_record[attr_name] = leiInfo[attr_name];
+			}
+	    } catch (error) {
+			console.debug(`signup_form lookupLEI failed: error: ${error}.  Using default data`);
+	    }
+
 		const data = JSON.stringify({
 			personal_info: user_record,
 			opts: opts,
