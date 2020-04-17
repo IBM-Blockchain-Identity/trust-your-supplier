@@ -215,17 +215,14 @@ class NullProofHelper {
 class AccountSignupHelper {
 
 	/**
-	 * Creates a AccountSignupHelper that will create proof requests asking for a drivers license and employment badge.
-	 * @param {string} gleif_issuer The agent name for the GLIEF issuer.
+	 * Creates a AccountSignupHelper that will create proof requests asking for an LEI
 	 * @param {string} lei_issuer The agent name for the LEI issuer.
 	 * @param {string} proof_schema_path The path to a proof schema file.
 	 * @param {Agent} agent An Agent instance capable of looking up schemas.
 	 */
-	constructor (gleif_issuer, lei_issuer, proof_schema_path, agent) {
-		if (!gleif_issuer || typeof gleif_issuer !== 'string')
-			throw new TypeError('Invalid HR issuer');
+	constructor (lei_issuer, proof_schema_path, agent) {
 		if (!lei_issuer || typeof lei_issuer !== 'string')
-			throw new TypeError('Invalid DMV issuer');
+			throw new TypeError('Invalid LEI Issuer');
 		if (!proof_schema_path || typeof proof_schema_path !== 'string')
 			throw new TypeError('Invalid proof schema path for signup helper');
 		if (!agent || typeof agent.getCredentialDefinitions !== 'function')
@@ -240,15 +237,15 @@ class AccountSignupHelper {
 		if (!fs.existsSync(proof_schema_path))
 			throw new Error(`File ${proof_schema_path} does not exist`);
 
-		this.gleif_issuer = gleif_issuer;
 		this.lei_issuer = lei_issuer;
 		this.proof_schema_path = proof_schema_path;
 		this.agent = agent;
 	}
 
 	/**
-	 * Sets up tagged connections to the DMV and HR apps so that we can use the `/credential_definitions?route=trustedLEIIssuer:true`
-	 * or `/credential_definitions?route=trustedLEIIssuer:true` API calls to get their credential definition list later.
+	 * Sets up tagged connections to the LEI Issuer app so that we can use the 
+	 * `/credential_definitions?route=trustedLEIIssuer:true` API call to get their credential 
+	 * definition list later.
 	 * @returns {Promise<void>} A promise that resolves when the tagged connections are established.
 	 */
 	async setup () {
@@ -264,19 +261,6 @@ class AccountSignupHelper {
 		});
 		await this.agent.waitForConnection(connection_offer.id);
 		logger.info(`Connection ${connection_offer.id} established`);
-
-		to = {};
-		if (this.gleif_issuer.toLowerCase().indexOf('http') >= 0)
-			to.url = this.gleif_issuer;
-		else
-			to.name = this.gleif_issuer;
-
-		logger.info(`Setting up a connection to trusted issuer: ${JSON.stringify(to)}`);
-		connection_offer = await this.agent.createConnection(to, {
-			trustedGLEIF: 'true'
-		});
-		await this.agent.waitForConnection(connection_offer.id);
-		logger.info(`Connection ${connection_offer.id} established`);
 	}
 
 	/**
@@ -285,14 +269,14 @@ class AccountSignupHelper {
 	 * @returns {Promise<void>} A promise that resolves when the connections created for this flow are deleted.
 	 */
 	async cleanup () {
-		logger.info(`Cleaning up connections to the issuers: ${this.lei_issuer} and ${this.gleif_issuer}`);
+		logger.info(`Cleaning up connections to the issuer: ${this.lei_issuer}`);
 		const connections = await this.agent.getConnections({
 			$or: [
 				{
-					'remote.name': {$in: [ this.gleif_issuer, this.lei_issuer ]}
+					'remote.name': {$in: [ this.lei_issuer ]}
 				},
 				{
-					'remote.url': {$in: [ this.gleif_issuer, this.lei_issuer ]}
+					'remote.url': {$in: [ this.lei_issuer ]}
 				}
 			]
 		});
@@ -329,22 +313,8 @@ class AccountSignupHelper {
 			}
 		}
 
-		logger.info(`Making sure we still have a connection to ${this.gleif_issuer} and ${this.lei_issuer}`);
+		logger.info(`Making sure we still have a connection to ${this.lei_issuer}`);
 		await this.setup();
-
-		logger.info(`Looking up credential definitions for issuer ${this.gleif_issuer}`);
-		const gleif_cred_defs = await this.agent.getCredentialDefinitions(null, {trustedGLEIF: 'true'});
-		logger.debug(`${this.gleif_issuer}'s credential definitions: ${JSON.stringify(gleif_cred_defs, 0, 1)}`);
-		const gleif_restrictions = [];
-		for (const agent_index in gleif_cred_defs.agents) {
-			const agent = gleif_cred_defs.agents[agent_index];
-
-			for (const cred_def_index in agent.results.items) {
-				const cred_def_id = agent.results.items[cred_def_index].id;
-
-				gleif_restrictions.push({cred_def_id: cred_def_id});
-			}
-		}
 
 		const proof_request = {
 			'name': PROOF_FORMAT.name,
@@ -357,8 +327,6 @@ class AccountSignupHelper {
 			let restrictions = [];
 			if (key.toLowerCase().indexOf('_lei') >= 0) {
 				restrictions = lei_issuer_restrictions;
-			} else if (key.toLowerCase().indexOf('_gleif') >= 0) {
-				restrictions = gleif_restrictions;
 			}
 			proof_request.requested_attributes[attribute] = {
 				name: attribute,
@@ -458,18 +426,21 @@ class AccountSignupHelper {
  * one of these so that it can establish a connection to look up their credential definitions and build a proof schema.
  */
 class ConnectionResponder {
-	constructor (agent, interval) {
+	constructor (agent, trusted_connections, interval) {
 		if (!agent || typeof agent.getConnections !== 'function')
 			throw new TypeError('Invalid agent for ConnectionResponder');
 		if (interval !== undefined && typeof interval !== 'number' || interval < 0)
 			throw new TypeError('Invalid polling interval for ConnectionResponder');
 		this.agent = agent;
 		this.stopped = true;
+		this.trustedConnections = trusted_connections !== undefined ? trusted_connections : null;
 		this.interval = interval !== undefined ? interval : 3000;
 	}
 
 	async start () {
 		this.stopped = false;
+		logger.info(`Trusted connections for ${this.agent.name}:  ${this.trustedConnections}`);
+		const connectionList = this.trustedConnections.split(",");
 
 		async.until(
 			() => { return this.stopped; },
@@ -484,9 +455,15 @@ class ConnectionResponder {
 					if (offers.length > 0) {
 						const offer = offers[0];
 						try {
-							logger.info(`Accepting connection offer ${offer.id} from  ${offer.remote.name}`);
-							const r = await this.agent.acceptConnection(offer.id);
-							logger.info(`Accepted connection offer ${r.id} from ${r.remote.name}`);
+							// We automatically accept connections if the agent name matches one in our 
+							// list, but it must be from the same account that our agent lives in
+							// to avoid name collisions from other accounts.
+							var trusted = connectionList.includes(offer.remote.name); 
+							if (trusted && (offer.remote.container_name === this.agent.url)) {
+								logger.info(`Accepting connection offer ${offer.id} from ${offer.remote.name}`);
+								const r = await this.agent.acceptConnection(offer.id);
+								logger.info(`Accepted connection offer ${r.id} from ${r.remote.name}`);
+							}
 						} catch (error) {
 							logger.error(`Couldn't accept connection offer ${offer.id}. Error: ${error}`);
 							logger.info(`Deleting bad connection offer ${offer.id}`);

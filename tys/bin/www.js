@@ -80,11 +80,10 @@ const ev = {
 	SIGNUP_PROOF_PROVIDER: process.env.SIGNUP_PROOF_PROVIDER,
 	SIGNUP_ACCOUNT_PROOF_PATH: process.env.SIGNUP_ACCOUNT_PROOF_PATH,
 	SIGNUP_LEI_ISSUER_AGENT: process.env.SIGNUP_LEI_ISSUER_AGENT,
-	SIGNUP_GLEIF_ISSUER_AGENT: process.env.SIGNUP_GLEIF_ISSUER_AGENT,
 	SCHEMA_TEMPLATE_PATH: process.env.SCHEMA_TEMPLATE_PATH,
-	ACCEPT_INCOMING_CONNECTIONS: process.env.ACCEPT_INCOMING_CONNECTIONS === 'true',
 	ADMIN_API_USERNAME: process.env.ADMIN_API_USERNAME,
-	ADMIN_API_PASSWORD: process.env.ADMIN_API_PASSWORD
+	ADMIN_API_PASSWORD: process.env.ADMIN_API_PASSWORD,
+	TRUSTED_CONNECTIONS: process.env.TRUSTED_CONNECTIONS
 };
 
 for (const key in ev) {
@@ -284,7 +283,7 @@ async function start () {
 		if (!ev.SIGNUP_LEI_ISSUER_AGENT)
 			throw new Error('SIGNUP_LEI_ISSUER_AGENT must be set in order to use `account` SIGNUP_PROOF_PROVIDER');
 		logger.info(`${ev.SIGNUP_PROOF_PROVIDER} signup proof selected.  Proof request path: ${ev.SIGNUP_ACCOUNT_PROOF_PATH}`);
-		signup_helper = new Helpers.AccountSignupHelper(ev.SIGNUP_GLEIF_ISSUER_AGENT, ev.SIGNUP_LEI_ISSUER_AGENT, ev.SIGNUP_ACCOUNT_PROOF_PATH, agent);
+		signup_helper = new Helpers.AccountSignupHelper(ev.SIGNUP_LEI_ISSUER_AGENT, ev.SIGNUP_ACCOUNT_PROOF_PATH, agent);
 		await signup_helper.cleanup();
 		await signup_helper.setup();
 
@@ -294,9 +293,9 @@ async function start () {
 		throw new Error(`Invalid value for SIGNUP_PROOF_PROVIDER: ${ev.SIGNUP_PROOF_PROVIDER}`);
 	}
 
-	if (ev.ACCEPT_INCOMING_CONNECTIONS) {
+	if (ev.TRUSTED_CONNECTIONS) {
 		logger.info(`Listening for and accepting connection offers to my agent, ${agent.name}`);
-		const responder = new Helpers.ConnectionResponder(agent);
+		const responder = new Helpers.ConnectionResponder(agent, ev.TRUSTED_CONNECTIONS);
 		responder.start();
 	} else {
 		logger.info(`Not listening for connection offers to my agent, ${agent.name}`);
