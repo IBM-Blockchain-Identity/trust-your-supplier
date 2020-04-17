@@ -40,7 +40,18 @@ To publish the credential schemas and definitions, do:
 ## Run the demo
 Follow the documentation for the Trust Your Supplier samples.
 
-### Quick Start
+### Logout+login from IBM Verify Credentials account
+In an effort to make sure that your IBM ID won't expire during the middle of a demo run, you should logout from your IBM Verify Credentials account and then log back into it using the browser that you will use during your demo.
+
+### Ensure credential manager setup
+
+#### Chrome extension
+If you are using the IBM Verify Credentials Chrome browser extension as your credential manager during the demo, make sure that it is enabled.  It will be blue when enabled and while you are logged into IBM Verify Credentials with your IBM ID.
+
+#### Mobile app
+If you are using the IBM Verify Credentials mobile app as your credential manager during the demo, make sure that you have added agent associations for both the Bloomberg (lei-issuer) and Acme agents.
+
+### Quick Start Webapps
  1. Run `docker-compose down` to stop any webapp and database containers still running from previous runs.
  2. Run `docker-compose build` to build any changes that have been made to the demo
  3. Run `docker-compose up -d` to bring up all of the webapp and database containers
@@ -57,6 +68,12 @@ After about 30s open each of the following web apps in a browser new tab:
 
 [http://localhost:8095](http://localhost:8095): IFT Network
 
+[https://search.gleif.org/#/record/549300VKX8CWI7ZGME90](https://search.gleif.org/#/record/549300VKX8CWI7ZGME90) The GLEIF search results for Acme Brick's LEI
+
+[https://www.gmeiutility.org/](https://www.gmeiutility.org/) Link for Acme Brick's real LEI Issuer
+
+If the webapps had already been opened from a previous demo run, you should refresh the webpage that the webapp is displaying on to ensure that the chrome-extension will be recognized by the webapp.
+
 
 ### Create Webapp Accounts
 
@@ -64,7 +81,19 @@ Click on the Admin button and make sure that a Bloomberg/LEI-Issuer account has 
 
 Click on the Admin button and make sure that an Acme account has been created in Bloomberg/LEI-Issuer
 
-### Cleanup Webapp Accounts
+### Cleanup After Run
+
+We have created a cleanup script, `cleanupAfterDemo.sh`.  It can be used in two different ways:
+
+`./cleanupAfterDemo.sh` will cleanup the connections and credentials as documented below.
+
+`./cleanupAfterDemo.sh <account userid>` will cleanup the connections and credentials as documented below.  In addition, it will cleanup the comma-separated list of accounts from the running webapps.
+
+The most common usage will likely be `./cleanupAfterDemo.sh acme@example.com`.
+
+If you'd like to cleanup manually, follow the following guidelines:
+
+#### Cleanup Webapp Accounts
 
 Click on the Admin button for each of the following webapps and delete the Acme accounts in:
 
@@ -72,7 +101,9 @@ Click on the Admin button for each of the following webapps and delete the Acme 
 * TYS
 * IFT Network
 
-### Cleanup Agents from previous runs
+#### Cleanup Agents from previous runs
+
+Use the IBM Verify Credentials web UI to cleanup the following resources.
 
 GLEIF:
 
@@ -108,6 +139,9 @@ Acme:
 * cleanup all credentials
 * cleanup all connections
 
+## Hints
+
+Watson Organic Farms, TYS and IFT Network all issue a credential as part of the account signup process.  To avoid having multiple copies of the same credential, remember to not click on the "obtain your digital credential" buttons on those webapp's account pages and to cleanup after every demo run.
 
 
 # Script
@@ -201,3 +235,6 @@ Mention:
 * During signup Acme is asked to profide a supplier credential from an IFT Founder (WOF in this case) and values from either a TYS credential or a digital LEI.
 * Notice that unlike other proof requests, IFT Network is asking for data from two different credentials.  This shows the flexibility of a proof request.  It can request any number of attributes from any number of credentials filtered by credential schemas by name, version and issuer.
 * After receiving the response from Acme, the IFT Network can make decisions based on the data that Acme supplied.
+
+
+**Don't forget to cleanup after your demo run in anticipation of your next demo!**
