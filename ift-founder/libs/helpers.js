@@ -456,10 +456,10 @@ class ConnectionResponder {
 						const offer = offers[0];
 						try {
 							// We automatically accept connections if the agent name matches one in our 
-							// list, but it must be from our local container to avoid name collisions
-							// with agents from foreign containers.
+							// list, but it must be from the same account that our agent lives in
+							// to avoid name collisions from other accounts.
 							var trusted = connectionList.includes(offer.remote.name); 
-							if (trusted && (offer.remote.container_name == this.agent.url)) {
+							if (trusted && (offer.remote.container_name === this.agent.url)) {
 								logger.info(`Accepting connection offer ${offer.id} from ${offer.remote.name}`);
 								const r = await this.agent.acceptConnection(offer.id);
 								logger.info(`Accepted connection offer ${r.id} from ${r.remote.name}`);

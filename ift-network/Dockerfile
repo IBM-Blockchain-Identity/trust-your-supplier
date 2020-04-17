@@ -26,6 +26,5 @@ ENV SIGNUP_ACCOUNT_PROOF_PATH_TYS=/opt/app/docs/account_proof_request_TYS.json
 ENV SIGNUP_ACCOUNT_PROOF_PATH_LEI=/opt/app/docs/account_proof_request_LEI.json
 
 ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/IFT_member_credential.json
-ENV ACCEPT_INCOMING_CONNECTIONS=false
 
 CMD npm run start

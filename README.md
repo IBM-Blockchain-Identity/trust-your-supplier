@@ -181,8 +181,8 @@ list of the existing configuration parameters:
 - `SCHEMA_TEMPLATE_PATH`: The path to a JSON file describing the credential schema for the issuer.  This parameter is configured
   in the Docker image file for each sample issuer and describes the locations of the driver's license, employment badge, and
   bank account schema files.
-- `ACCEPT_INCOMING_CONNECTIONS`: A toggle that causes the sample app to pole for incoming connection offers and accept
-  them.  This is the mechanism that allows ACME to connect to LEI Issuer and GLEIF in order to get a list of credential schemas
+- `- TRUSTED_CONNECTIONS`: Agents listed here do not require connections to be manually accepted. Connection requests will  automatically be accepted. If there are no trusted agents, this field should be left blank. Trusted agents should be listed in a comma separated string, one after the other with no spaces. As an example: ${lei-issuer},${ift-network}
+
   when `SIGNUP_PROOF_PROVIDER === 'account'`.
 - `ADMIN_API_USERNAME`: The username to use to protect the admin UI/API.  If this and `ADMIN_API_PASSWORD`
   are left blank, the admin panel will not be protected by authentication.

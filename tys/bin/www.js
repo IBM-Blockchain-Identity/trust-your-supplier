@@ -81,7 +81,6 @@ const ev = {
 	SIGNUP_ACCOUNT_PROOF_PATH: process.env.SIGNUP_ACCOUNT_PROOF_PATH,
 	SIGNUP_LEI_ISSUER_AGENT: process.env.SIGNUP_LEI_ISSUER_AGENT,
 	SCHEMA_TEMPLATE_PATH: process.env.SCHEMA_TEMPLATE_PATH,
-	ACCEPT_INCOMING_CONNECTIONS: process.env.ACCEPT_INCOMING_CONNECTIONS === 'true',
 	ADMIN_API_USERNAME: process.env.ADMIN_API_USERNAME,
 	ADMIN_API_PASSWORD: process.env.ADMIN_API_PASSWORD,
 	TRUSTED_CONNECTIONS: process.env.TRUSTED_CONNECTIONS
@@ -294,7 +293,6 @@ async function start () {
 		throw new Error(`Invalid value for SIGNUP_PROOF_PROVIDER: ${ev.SIGNUP_PROOF_PROVIDER}`);
 	}
 
-	//if (ev.ACCEPT_INCOMING_CONNECTIONS) {
 	if (ev.TRUSTED_CONNECTIONS) {
 		logger.info(`Listening for and accepting connection offers to my agent, ${agent.name}`);
 		const responder = new Helpers.ConnectionResponder(agent, ev.TRUSTED_CONNECTIONS);

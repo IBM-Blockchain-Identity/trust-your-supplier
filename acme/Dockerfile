@@ -25,6 +25,5 @@ ENV LOGIN_PROOF_PATH=/opt/app/docs/customer_login_proof_schema.json
 ENV SIGNUP_PROOF_PROVIDER=none
 
 ENV SCHEMA_TEMPLATE_PATH=/opt/app/docs/customer_cred_def.json
-ENV ACCEPT_INCOMING_CONNECTIONS=false
 
 CMD npm run start
